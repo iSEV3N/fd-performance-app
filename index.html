@@ -1,0 +1,3322 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0D1B2A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FD Performance">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="FD Performance">
+<meta name="description" content="Flight Dispatcher Performance Handbook — 11 บท ครอบคลุม ISA, Aerodynamics, Takeoff, Cruise, Landing, ETOPS และอื่นๆ">
+<meta name="format-detection" content="telephone=no">
+<meta name="msapplication-tap-highlight" content="no">
+<title>FD Performance · Flight Dispatcher Handbook</title>
+<!-- PWA Manifest inline -->
+<link rel="manifest" href="data:application/manifest+json,{
+  %22name%22:%22FD Performance - Flight Dispatcher Handbook%22,
+  %22short_name%22:%22FD Perf%22,
+  %22description%22:%22Aircraft Performance Handbook for Flight Dispatchers%22,
+  %22start_url%22:%22.%22,
+  %22display%22:%22standalone%22,
+  %22orientation%22:%22portrait%22,
+  %22background_color%22:%22%230D1B2A%22,
+  %22theme_color%22:%22%230D1B2A%22,
+  %22icons%22:[{%22src%22:%22data:image/svg+xml,...%22,%22sizes%22:%22any%22,%22type%22:%22image/svg+xml%22}]
+}">
+<!-- Apple touch icon — inline SVG converted to data URI -->
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIj48cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgcng9IjQwIiBmaWxsPSIjMEQxQjJBIi8+PHRleHQgeD0iOTAiIHk9IjEwNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjcwIiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjMjE5NkM0Ij7inIY8L3RleHQ+PHRleHQgeD0iOTAiIHk9IjE1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjIyIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjNjhCNEQ4Ij5GRCBQRVJGPC90ZXh0Pjwvc3ZnPg==">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230D1B2A'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Arial' font-size='18' font-weight='900' fill='%232196C4'%3E✈%3C/text%3E%3C/svg%3E">
+<style>
+/* ── TOKENS ─────────────────────────────────────── */
+:root {
+  --navy:   #0D1B2A;
+  --navy2:  #122840;
+  --blue:   #1A6FA8;
+  --sky:    #2196C4;
+  --gold:   #C8961E;
+  --gold2:  #E5AF35;
+  --teal:   #0E7C6E;
+  --red:    #C0392B;
+  --bg:     #080F1A;
+  --bg2:    #0F1C2E;
+  --bg3:    #162336;
+  --surface:#1A2D42;
+  --card:   #1E3348;
+  --border: #2A4060;
+  --text:   #E8EFF8;
+  --text2:  #A8BDD4;
+  --text3:  #6A8DAB;
+  --accent: #2196C4;
+  --mono:   'Courier New', monospace;
+  --sans:   'Segoe UI', system-ui, -apple-system, sans-serif;
+  --display:'Georgia', serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ── SCROLLBAR ───────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--blue); }
+
+/* ── TOP NAV ─────────────────────────────────────── */
+#topnav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(8,15,26,0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0;
+  height: 56px;
+  padding: 0 max(16px, env(safe-area-inset-left)) 0 max(16px, env(safe-area-inset-right));
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; font-weight: 700; color: var(--sky);
+  letter-spacing: 0.06em; text-transform: uppercase;
+  white-space: nowrap; flex-shrink: 0;
+}
+.nav-brand svg { flex-shrink: 0; }
+.nav-tabs {
+  display: flex; align-items: center; gap: 2px;
+  overflow-x: auto; padding: 0 12px;
+  scrollbar-width: none; flex: 1;
+}
+.nav-tabs::-webkit-scrollbar { display: none; }
+.nav-tab {
+  padding: 6px 12px; border-radius: 6px;
+  font-size: 12px; font-weight: 600; white-space: nowrap;
+  color: var(--text3); cursor: pointer;
+  transition: all .2s; border: none; background: none;
+  letter-spacing: 0.04em;
+}
+.nav-tab:hover { color: var(--text2); background: var(--surface); }
+.nav-tab.active { color: var(--sky); background: rgba(33,150,196,0.12); }
+.nav-progress {
+  position: fixed; top: 56px; left: 0; right: 0; z-index: 999;
+  height: 2px; background: var(--border);
+}
+.nav-progress-bar {
+  height: 100%; background: linear-gradient(90deg, var(--blue), var(--gold));
+  width: 0%; transition: width .1s;
+}
+
+/* ── HERO ────────────────────────────────────────── */
+#hero {
+  min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 80px 24px 60px;
+  position: relative; overflow: hidden;
+  background: radial-gradient(ellipse 120% 80% at 60% 40%, #0A2540 0%, var(--bg) 70%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(33,150,196,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(33,150,196,0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);
+}
+.hero-circle {
+  position: absolute; top: 15%; right: -80px;
+  width: 400px; height: 400px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(33,150,196,0.08) 0%, transparent 70%);
+  animation: pulse 8s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { transform: scale(1); opacity: .6; }
+  50% { transform: scale(1.08); opacity: 1; }
+}
+.hero-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: .16em;
+  color: var(--gold); text-transform: uppercase; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 8px;
+}
+.hero-eyebrow::before {
+  content: ''; display: block; width: 32px; height: 1px; background: var(--gold);
+}
+.hero-title {
+  font-family: var(--display);
+  font-size: clamp(2.4rem, 6vw, 4.8rem);
+  font-weight: 400; line-height: 1.1;
+  color: var(--text); margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+.hero-title em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--sky) 0%, var(--gold2) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: var(--text2); max-width: 600px; line-height: 1.6;
+  margin-bottom: 40px;
+}
+.hero-stats {
+  display: flex; gap: 32px; flex-wrap: wrap; margin-bottom: 48px;
+}
+.stat-item { display: flex; flex-direction: column; gap: 2px; }
+.stat-num {
+  font-size: 2rem; font-weight: 800; line-height: 1;
+  color: var(--sky);
+}
+.stat-lbl { font-size: 11px; color: var(--text3); letter-spacing: .08em; text-transform: uppercase; }
+.hero-chapters {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.chapter-pill {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: 99px;
+  border: 1px solid var(--border); background: rgba(26,45,66,0.6);
+  font-size: 12px; color: var(--text2); cursor: pointer;
+  transition: all .2s; font-weight: 500;
+}
+.chapter-pill:hover {
+  border-color: var(--sky); color: var(--sky);
+  background: rgba(33,150,196,0.1);
+}
+.chapter-pill .ch-num {
+  font-size: 10px; font-weight: 800; color: var(--gold);
+  letter-spacing: .05em;
+}
+
+/* ── MAIN LAYOUT ─────────────────────────────────── */
+#main { padding-top: 0; }
+
+/* ── CHAPTER SECTIONS ────────────────────────────── */
+.chapter-section {
+  padding: 80px 0 60px;
+  border-top: 1px solid var(--border);
+  position: relative;
+}
+.chapter-section:nth-child(even) { background: var(--bg2); }
+.chapter-header {
+  max-width: 900px; margin: 0 auto;
+  padding: 0 24px 48px;
+}
+.ch-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 800; letter-spacing: .14em;
+  color: var(--gold); text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.ch-badge span {
+  display: inline-block; width: 28px; height: 28px;
+  border-radius: 6px; background: var(--gold);
+  color: var(--bg); font-size: 13px; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+}
+.ch-title {
+  font-family: var(--display);
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 400; line-height: 1.15;
+  color: var(--text); margin-bottom: 12px;
+}
+.ch-desc {
+  font-size: 1.05rem; color: var(--text2); line-height: 1.7;
+  max-width: 680px;
+}
+.chapter-body {
+  max-width: 900px; margin: 0 auto; padding: 0 24px;
+}
+
+/* ── CONTENT BLOCKS ──────────────────────────────── */
+.section-h2 {
+  font-size: 1.3rem; font-weight: 700;
+  color: var(--sky); margin: 48px 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(33,150,196,0.25);
+  display: flex; align-items: center; gap: 10px;
+}
+.section-h2::before {
+  content: ''; display: block;
+  width: 4px; height: 18px; border-radius: 2px;
+  background: var(--sky); flex-shrink: 0;
+}
+.section-h3 {
+  font-size: 1.05rem; font-weight: 700;
+  color: var(--gold2); margin: 28px 0 10px;
+  letter-spacing: .01em;
+}
+.prose {
+  font-size: .97rem; color: var(--text2); line-height: 1.8;
+  margin-bottom: 16px;
+}
+.prose strong { color: var(--text); font-weight: 700; }
+.prose em { color: var(--gold2); font-style: normal; }
+.prose code {
+  font-family: var(--mono); font-size: .88em;
+  background: var(--surface); padding: 2px 6px; border-radius: 4px;
+  color: var(--sky);
+}
+
+/* ── FORMULA BOX ─────────────────────────────────── */
+.formula {
+  background: linear-gradient(135deg, #0D2438, #142030);
+  border: 1px solid var(--gold);
+  border-left: 4px solid var(--gold);
+  border-radius: 8px; padding: 16px 20px;
+  margin: 16px 0; font-family: var(--mono);
+  font-size: .95rem; color: var(--gold2);
+  letter-spacing: .03em; line-height: 1.6;
+  overflow-x: auto;
+}
+
+/* ── INFO BOXES ──────────────────────────────────── */
+.infobox {
+  border-radius: 10px; overflow: hidden;
+  margin: 20px 0; border: 1px solid transparent;
+}
+.infobox-header {
+  padding: 10px 16px; font-size: .85rem;
+  font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; display: flex; align-items: center; gap: 8px;
+}
+.infobox-body {
+  padding: 14px 16px;
+}
+.infobox-body p {
+  font-size: .92rem; color: var(--text2); line-height: 1.7;
+  margin-bottom: 6px;
+}
+.infobox-body p:last-child { margin-bottom: 0; }
+.infobox.blue { border-color: rgba(33,150,196,0.3); }
+.infobox.blue .infobox-header { background: rgba(33,150,196,0.2); color: var(--sky); }
+.infobox.blue .infobox-body { background: rgba(33,150,196,0.06); }
+.infobox.gold { border-color: rgba(200,150,30,0.3); }
+.infobox.gold .infobox-header { background: rgba(200,150,30,0.2); color: var(--gold2); }
+.infobox.gold .infobox-body { background: rgba(200,150,30,0.06); }
+.infobox.red { border-color: rgba(192,57,43,0.3); }
+.infobox.red .infobox-header { background: rgba(192,57,43,0.2); color: #E57565; }
+.infobox.red .infobox-body { background: rgba(192,57,43,0.06); }
+.infobox.green { border-color: rgba(14,124,110,0.3); }
+.infobox.green .infobox-header { background: rgba(14,124,110,0.2); color: #4DD9C6; }
+.infobox.green .infobox-body { background: rgba(14,124,110,0.06); }
+
+/* ── TABLES ──────────────────────────────────────── */
+.table-wrap { overflow-x: auto; margin: 16px 0; border-radius: 10px; border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+thead tr { background: var(--navy2); }
+thead th {
+  padding: 11px 14px; text-align: left;
+  font-size: .78rem; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--sky);
+  white-space: nowrap; border-bottom: 1px solid var(--border);
+}
+tbody tr { border-bottom: 1px solid rgba(42,64,96,0.5); transition: background .15s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: rgba(33,150,196,0.06); }
+tbody tr:nth-child(even) { background: rgba(15,28,46,0.5); }
+tbody tr:nth-child(even):hover { background: rgba(33,150,196,0.06); }
+td { padding: 10px 14px; color: var(--text2); line-height: 1.5; vertical-align: top; }
+td:first-child { color: var(--text); font-weight: 600; }
+td code {
+  font-family: var(--mono); font-size: .85em;
+  background: var(--surface); padding: 2px 5px; border-radius: 3px;
+  color: var(--gold2);
+}
+
+/* ── BULLET / NUMBERED ───────────────────────────── */
+.list-block { margin: 12px 0 12px 4px; }
+.list-block li {
+  font-size: .93rem; color: var(--text2); line-height: 1.7;
+  margin-bottom: 6px; padding-left: 20px; position: relative;
+  list-style: none;
+}
+.list-block li::before {
+  content: '›'; position: absolute; left: 0;
+  color: var(--sky); font-weight: 700;
+}
+.list-block.numbered { counter-reset: item; }
+.list-block.numbered li::before {
+  content: counter(item); counter-increment: item;
+  font-size: .75rem; font-weight: 800;
+  color: var(--gold); background: rgba(200,150,30,0.12);
+  width: 18px; height: 18px; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  top: 3px;
+}
+
+/* ── CARDS GRID ──────────────────────────────────── */
+.card-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px; margin: 20px 0;
+}
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px;
+  transition: border-color .2s, transform .2s;
+}
+.card:hover { border-color: var(--sky); transform: translateY(-2px); }
+.card-icon { font-size: 1.6rem; margin-bottom: 10px; }
+.card-title { font-size: .95rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.card-body { font-size: .86rem; color: var(--text2); line-height: 1.6; }
+
+/* ── V-SPEEDS GRID ───────────────────────────────── */
+.vspeed-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px; margin: 16px 0;
+}
+.vspeed-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 14px;
+  border-left: 3px solid var(--sky);
+  transition: all .2s;
+}
+.vspeed-card:hover { border-left-color: var(--gold); background: var(--card); }
+.vspeed-name { font-size: 1.05rem; font-weight: 800; color: var(--sky); font-family: var(--mono); }
+.vspeed-full { font-size: .75rem; color: var(--text3); margin: 3px 0 6px; line-height: 1.4; }
+.vspeed-desc { font-size: .82rem; color: var(--text2); line-height: 1.5; }
+
+/* ── WEIGHT LADDER ───────────────────────────────── */
+.weight-ladder {
+  display: flex; flex-direction: column; gap: 0; margin: 16px 0;
+  border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+}
+.wl-row {
+  display: flex; align-items: stretch;
+  border-bottom: 1px solid var(--border); cursor: default;
+  transition: background .15s;
+}
+.wl-row:last-child { border-bottom: none; }
+.wl-row:hover { background: rgba(33,150,196,0.06); }
+.wl-abbr {
+  width: 80px; flex-shrink: 0; background: var(--navy2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: .85rem; font-weight: 800;
+  color: var(--sky); border-right: 1px solid var(--border); padding: 12px 8px;
+}
+.wl-content { flex: 1; padding: 12px 16px; }
+.wl-name { font-size: .9rem; font-weight: 700; color: var(--text); }
+.wl-desc { font-size: .82rem; color: var(--text2); margin-top: 2px; line-height: 1.5; }
+.wl-limit { font-size: .8rem; color: var(--gold); margin-top: 3px; font-family: var(--mono); }
+
+/* ── CALLOUT STRIP ───────────────────────────────── */
+.callout {
+  background: linear-gradient(135deg, rgba(33,150,196,0.1), rgba(14,124,110,0.1));
+  border: 1px solid rgba(33,150,196,0.25);
+  border-radius: 12px; padding: 20px 24px;
+  margin: 24px 0; display: flex; gap: 16px; align-items: flex-start;
+}
+.callout-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 2px; }
+.callout-body { flex: 1; }
+.callout-title { font-size: .9rem; font-weight: 800; color: var(--sky); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .05em; }
+.callout-text { font-size: .9rem; color: var(--text2); line-height: 1.7; }
+
+/* ── CHECKLIST ───────────────────────────────────── */
+.checklist { margin: 16px 0; }
+.cl-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 14px; border-radius: 8px; margin-bottom: 4px;
+  background: var(--surface); border: 1px solid var(--border);
+  font-size: .88rem; color: var(--text2); line-height: 1.5;
+  transition: all .2s;
+}
+.cl-item:hover { background: var(--card); border-color: var(--teal); }
+.cl-box {
+  width: 18px; height: 18px; border: 2px solid var(--teal);
+  border-radius: 4px; flex-shrink: 0; margin-top: 1px;
+  display: flex; align-items: center; justify-content: center;
+}
+.cl-box::after { content: '✓'; color: var(--teal); font-size: .7rem; font-weight: 900; opacity: 0; }
+.cl-item:hover .cl-box::after { opacity: 1; }
+
+/* ── RCC BADGES ──────────────────────────────────── */
+.rcc-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px; margin: 16px 0;
+}
+.rcc-card {
+  border-radius: 10px; overflow: hidden;
+  border: 1px solid var(--border);
+}
+.rcc-header {
+  padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+}
+.rcc-num {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 1.1rem; flex-shrink: 0;
+}
+.rcc-body { padding: 10px 14px 14px; background: var(--surface); }
+.rcc-body p { font-size: .8rem; color: var(--text2); line-height: 1.55; margin-bottom: 4px; }
+.rcc-body p:last-child { margin-bottom: 0; }
+.rcc-def { font-size: .78rem; color: var(--text3); font-style: italic; margin-bottom: 6px; line-height: 1.45; }
+.rcc-stat { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0; }
+.rcc-badge {
+  font-size: .7rem; font-weight: 700; padding: 2px 7px; border-radius: 4px;
+  letter-spacing: .04em; white-space: nowrap;
+}
+.rcc-example { font-size: .75rem; color: var(--text3); margin-top: 6px; padding-top: 6px;
+  border-top: 1px solid rgba(255,255,255,0.06); line-height: 1.5; }
+
+/* ── FUEL LADDER ─────────────────────────────────── */
+.fuel-stack { display: flex; flex-direction: column; gap: 4px; margin: 16px 0; }
+.fuel-row {
+  display: flex; align-items: center; gap: 0;
+  border-radius: 6px; overflow: hidden;
+  border: 1px solid var(--border); height: 52px;
+}
+.fuel-label {
+  flex: 1; padding: 0 16px; font-size: .88rem; color: var(--text2);
+  display: flex; align-items: center;
+}
+.fuel-abbr {
+  width: 120px; flex-shrink: 0; background: var(--navy2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: .8rem; font-weight: 800;
+  color: var(--sky); border-right: 1px solid var(--border); height: 100%;
+  padding: 0 8px; text-align: center;
+}
+.fuel-req {
+  width: 80px; flex-shrink: 0; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .72rem; font-weight: 700; text-align: center;
+  border-left: 1px solid var(--border);
+}
+
+/* ── SCENARIO BOX ────────────────────────────────── */
+.scenario-box {
+  background: var(--bg3);
+  border: 1px solid var(--gold);
+  border-radius: 12px; overflow: hidden; margin: 20px 0;
+}
+.scenario-header {
+  background: linear-gradient(135deg, #1A2800, #251F00);
+  padding: 12px 20px; display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid var(--gold);
+}
+.scenario-header span { font-size: .85rem; font-weight: 800; color: var(--gold); letter-spacing: .08em; text-transform: uppercase; }
+.scenario-body { padding: 20px; }
+.scenario-body .sline {
+  display: flex; gap: 16px; margin-bottom: 8px;
+  font-size: .88rem;
+}
+.sline .sk { color: var(--text3); min-width: 140px; flex-shrink: 0; }
+.sline .sv { color: var(--text); font-weight: 600; }
+
+/* ── STEP BLOCK ──────────────────────────────────── */
+.steps { margin: 16px 0; }
+.step-item {
+  display: flex; gap: 16px; margin-bottom: 12px; align-items: flex-start;
+}
+.step-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--blue); color: white;
+  font-size: .78rem; font-weight: 900;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  margin-top: 2px;
+}
+.step-text { font-size: .92rem; color: var(--text2); line-height: 1.7; padding-top: 4px; }
+.step-text strong { color: var(--text); }
+
+/* ── GLOSSARY ────────────────────────────────────── */
+.glossary-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px; margin: 16px 0;
+}
+.gloss-item {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 14px;
+  transition: border-color .2s;
+}
+.gloss-item:hover { border-color: var(--sky); }
+.gloss-abbr { font-family: var(--mono); font-size: .95rem; font-weight: 800; color: var(--sky); }
+.gloss-full { font-size: .78rem; color: var(--gold2); margin: 2px 0 6px; }
+.gloss-def { font-size: .82rem; color: var(--text2); line-height: 1.5; }
+
+/* ── BACK TO TOP ─────────────────────────────────── */
+#back-top {
+  position: fixed; bottom: 24px; right: 20px; z-index: 900;
+  width: 40px; height: 40px; border-radius: 10px;
+  background: var(--blue); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; color: white;
+  opacity: 0; transform: translateY(8px);
+  transition: all .25s; box-shadow: 0 4px 16px rgba(0,0,0,.4);
+}
+#back-top.show { opacity: 1; transform: translateY(0); }
+#back-top:hover { background: var(--sky); }
+
+/* ── FOOTER ──────────────────────────────────────── */
+footer {
+  background: var(--navy);
+  border-top: 1px solid var(--border);
+  padding: 48px 24px; text-align: center;
+}
+footer p { font-size: .82rem; color: var(--text3); line-height: 1.8; }
+footer strong { color: var(--text2); }
+
+/* ══════════════════════════════════════════════════
+   RESPONSIVE — Mobile · Tablet · Desktop
+   Mobile  : ≤ 480px
+   Tablet  : 481px – 1024px
+   Desktop : ≥ 1025px
+══════════════════════════════════════════════════ */
+
+/* ── DESKTOP (≥1025px) — default wide layout ─────── */
+@media (min-width: 1025px) {
+  html { font-size: 16px; }
+  .chapter-header { max-width: 960px; padding: 0 40px 52px; }
+  .chapter-body   { max-width: 960px; padding: 0 40px; }
+  #hero { padding: 96px 48px 72px; }
+  .hero-title { font-size: 5.2rem; }
+  .hero-sub   { font-size: 1.25rem; max-width: 680px; }
+  .card-grid  { grid-template-columns: repeat(4, 1fr); }
+  .vspeed-grid { grid-template-columns: repeat(4, 1fr); }
+  .rcc-grid   { grid-template-columns: repeat(3, 1fr); }
+  .glossary-grid { grid-template-columns: repeat(3, 1fr); }
+  .hero-stats { gap: 48px; }
+  .stat-num   { font-size: 2.4rem; }
+  .formula    { font-size: 1rem; }
+  table       { font-size: .92rem; }
+  thead th    { font-size: .8rem; padding: 12px 16px; }
+  td          { padding: 11px 16px; font-size: .9rem; }
+  .section-h2 { font-size: 1.4rem; margin: 56px 0 18px; }
+  .section-h3 { font-size: 1.08rem; margin: 32px 0 12px; }
+  .prose      { font-size: 1rem; }
+  .nav-brand  { font-size: 14px; }
+  .nav-tab    { font-size: 13px; padding: 7px 14px; }
+  .infobox-body p { font-size: .95rem; }
+  .callout-text { font-size: .95rem; }
+  .weight-ladder .wl-abbr { width: 96px; font-size: .9rem; }
+  .fuel-abbr  { width: 136px; font-size: .84rem; }
+  .step-text  { font-size: .96rem; }
+  .cl-item    { font-size: .92rem; }
+  .vspeed-name { font-size: 1.1rem; }
+  .card-body  { font-size: .9rem; }
+  .rcc-body p { font-size: .84rem; }
+  .rcc-def    { font-size: .82rem; }
+  .rcc-example { font-size: .79rem; }
+  .ch-title   { font-size: 3.2rem; }
+  .ch-desc    { font-size: 1.1rem; }
+}
+
+/* ── TABLET (481px – 1024px) ─────────────────────── */
+@media (min-width: 481px) and (max-width: 1024px) {
+  html { font-size: 15px; }
+  .chapter-header { max-width: 100%; padding: 0 28px 44px; }
+  .chapter-body   { max-width: 100%; padding: 0 28px; }
+  #hero { padding: 80px 32px 60px; min-height: 85svh; }
+  .hero-title { font-size: clamp(2.8rem, 5.5vw, 4.2rem); }
+  .hero-sub   { font-size: 1.1rem; max-width: 560px; }
+  .hero-stats { gap: 32px; flex-wrap: wrap; }
+  .stat-num   { font-size: 2rem; }
+  .card-grid  { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .vspeed-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .rcc-grid   { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .glossary-grid { grid-template-columns: repeat(2, 1fr); }
+  table       { font-size: .88rem; }
+  thead th    { font-size: .77rem; padding: 10px 12px; }
+  td          { padding: 10px 12px; font-size: .87rem; }
+  .nav-brand span { display: none; }
+  .nav-tab    { font-size: 12px; padding: 6px 10px; }
+  .section-h2 { font-size: 1.25rem; }
+  .formula    { font-size: .9rem; padding: 14px 18px; }
+  .weight-ladder .wl-abbr { width: 80px; font-size: .82rem; }
+  .wl-name    { font-size: .88rem; }
+  .wl-desc    { font-size: .8rem; }
+  .fuel-abbr  { width: 112px; font-size: .8rem; }
+  .fuel-label { font-size: .86rem; }
+  .fuel-req   { width: 72px; font-size: .7rem; }
+  .hero-circle { width: 300px; height: 300px; }
+  .callout    { gap: 12px; padding: 16px 20px; }
+  .scenario-body .sline { font-size: .86rem; }
+  .sline .sk  { min-width: 120px; }
+  .vspeed-name { font-size: 1rem; }
+  .rcc-body p { font-size: .8rem; }
+  .rcc-example { font-size: .76rem; }
+  .ch-title   { font-size: clamp(1.9rem, 4vw, 2.6rem); }
+  .ch-desc    { font-size: 1rem; }
+  .step-text  { font-size: .9rem; }
+  .cl-item    { font-size: .87rem; padding: 9px 12px; }
+  .infobox-header { font-size: .84rem; }
+  .infobox-body p { font-size: .88rem; }
+}
+
+/* ── MOBILE (≤480px) ─────────────────────────────── */
+@media (max-width: 480px) {
+  html { font-size: 14px; }
+  /* Nav */
+  #topnav { height: 50px; padding: 0 12px; }
+  .nav-brand { font-size: 11px; gap: 6px; }
+  .nav-brand svg { width: 18px; height: 18px; }
+  .nav-brand span { display: none; }
+  .nav-tabs  { padding: 0 6px; gap: 1px; }
+  .nav-tab   { font-size: 10px; padding: 5px 7px; border-radius: 5px; }
+  .nav-progress { top: 50px; }
+
+  /* Hero */
+  #hero { padding: 66px 18px 48px; min-height: 92svh; }
+  .hero-eyebrow { font-size: 10px; margin-bottom: 14px; }
+  .hero-title { font-size: clamp(2.2rem, 9vw, 3rem); line-height: 1.08; }
+  .hero-sub   { font-size: .95rem; margin-bottom: 28px; }
+  .hero-stats { gap: 16px; margin-bottom: 32px; }
+  .stat-num   { font-size: 1.7rem; }
+  .stat-lbl   { font-size: 10px; }
+  .hero-circle { width: 200px; height: 200px; right: -60px; }
+  .hero-chapters { gap: 6px; }
+  .chapter-pill { font-size: 11px; padding: 6px 11px; }
+  .chapter-pill .ch-num { font-size: 9px; }
+
+  /* Chapter layout */
+  .chapter-section { padding: 56px 0 44px; }
+  .chapter-header { padding: 0 18px 28px; }
+  .chapter-body   { padding: 0 18px; }
+  .ch-badge       { font-size: 10px; margin-bottom: 12px; }
+  .ch-badge span  { width: 24px; height: 24px; font-size: 11px; }
+  .ch-title       { font-size: clamp(1.6rem, 7vw, 2rem); }
+  .ch-desc        { font-size: .92rem; }
+  .section-h2     { font-size: 1.1rem; margin: 36px 0 14px; gap: 8px; }
+  .section-h2::before { width: 3px; height: 15px; }
+  .section-h3     { font-size: .98rem; margin: 24px 0 8px; }
+  .prose          { font-size: .9rem; line-height: 1.75; }
+
+  /* Tables */
+  .table-wrap     { border-radius: 8px; margin: 14px 0; }
+  table           { font-size: .78rem; min-width: 480px; }
+  thead th        { font-size: .68rem; padding: 8px 9px; white-space: normal; line-height: 1.35; }
+  td              { padding: 8px 9px; font-size: .78rem; line-height: 1.45; vertical-align: top; }
+  td:first-child  { font-size: .8rem; }
+
+  /* Formula boxes */
+  .formula { font-size: .78rem; padding: 12px 14px; letter-spacing: 0; overflow-x: auto; }
+
+  /* Info boxes */
+  .infobox-header { font-size: .8rem; padding: 8px 14px; }
+  .infobox-body   { padding: 12px 14px; }
+  .infobox-body p { font-size: .83rem; line-height: 1.65; }
+
+  /* Cards */
+  .card-grid  { grid-template-columns: 1fr; gap: 10px; }
+  .card       { padding: 16px; }
+  .card-icon  { font-size: 1.4rem; margin-bottom: 8px; }
+  .card-title { font-size: .92rem; }
+  .card-body  { font-size: .83rem; }
+
+  /* V-speeds */
+  .vspeed-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .vspeed-card { padding: 10px 12px; }
+  .vspeed-name { font-size: .95rem; }
+  .vspeed-full { font-size: .7rem; }
+  .vspeed-desc { font-size: .77rem; }
+
+  /* Weight ladder */
+  .weight-ladder .wl-abbr { width: 64px; font-size: .75rem; padding: 10px 6px; }
+  .wl-content { padding: 10px 12px; }
+  .wl-name    { font-size: .85rem; }
+  .wl-desc    { font-size: .77rem; }
+  .wl-limit   { font-size: .74rem; }
+
+  /* Fuel stack */
+  .fuel-row   { height: auto; min-height: 44px; flex-wrap: nowrap; }
+  .fuel-abbr  { width: 88px; font-size: .72rem; padding: 8px 6px; text-align: center; flex-shrink: 0; }
+  .fuel-label { font-size: .78rem; padding: 8px 10px; line-height: 1.4; }
+  .fuel-req   { width: 58px; font-size: .65rem; padding: 4px; flex-shrink: 0; }
+
+  /* RCC cards */
+  .rcc-grid   { grid-template-columns: 1fr; gap: 10px; }
+  .rcc-card   { border-radius: 8px; }
+  .rcc-header { padding: 8px 12px; }
+  .rcc-num    { width: 28px; height: 28px; font-size: 1rem; }
+  .rcc-body   { padding: 8px 12px 12px; }
+  .rcc-body p { font-size: .78rem; }
+  .rcc-def    { font-size: .75rem; }
+  .rcc-example { font-size: .72rem; }
+  .rcc-stat   { gap: 6px; }
+  .rcc-badge  { font-size: .66rem; padding: 2px 6px; }
+
+  /* Callout */
+  .callout { gap: 10px; padding: 14px 16px; flex-direction: row; align-items: flex-start; }
+  .callout-icon { font-size: 1.2rem; }
+  .callout-title { font-size: .82rem; }
+  .callout-text { font-size: .83rem; }
+
+  /* Checklist */
+  .cl-item  { font-size: .82rem; padding: 8px 10px; gap: 8px; }
+  .cl-box   { width: 16px; height: 16px; flex-shrink: 0; }
+
+  /* Steps */
+  .step-item { gap: 12px; }
+  .step-num  { width: 24px; height: 24px; font-size: .72rem; flex-shrink: 0; }
+  .step-text { font-size: .85rem; }
+
+  /* Scenario */
+  .scenario-body { padding: 16px; }
+  .scenario-body .sline { font-size: .82rem; flex-wrap: wrap; gap: 4px; }
+  .sline .sk { min-width: 100%; font-size: .74rem; }
+  .sline .sv { font-size: .84rem; }
+
+  /* Glossary */
+  .glossary-grid { grid-template-columns: 1fr; gap: 8px; }
+  .gloss-abbr { font-size: .9rem; }
+  .gloss-full { font-size: .74rem; }
+  .gloss-def  { font-size: .78rem; }
+
+  /* Back to top */
+  #back-top { bottom: 16px; right: 14px; width: 36px; height: 36px; font-size: 1rem; }
+
+  /* Footer */
+  footer { padding: 36px 18px; }
+  footer p { font-size: .78rem; }
+
+  /* SVG diagrams — scale down on mobile */
+  svg[viewBox] { max-width: 100%; }
+}
+
+/* ══════════════════════════════════════════════════
+   PWA APP SHELL
+══════════════════════════════════════════════════ */
+
+/* ── Splash Screen ───────────────────────────────── */
+#splash {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #080F1A;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 20px; transition: opacity .5s, visibility .5s;
+}
+#splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.splash-icon {
+  width: 96px; height: 96px; border-radius: 22px;
+  background: linear-gradient(135deg, #122840, #1A3A5C);
+  border: 1.5px solid rgba(33,150,196,0.4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 48px;
+  box-shadow: 0 0 40px rgba(33,150,196,0.15);
+  animation: splashPulse 1.6s ease-in-out infinite;
+}
+@keyframes splashPulse {
+  0%,100% { box-shadow: 0 0 30px rgba(33,150,196,0.12); }
+  50%      { box-shadow: 0 0 60px rgba(33,150,196,0.28); }
+}
+.splash-title {
+  font-family: var(--sans); font-size: 1.4rem; font-weight: 800;
+  color: var(--sky); letter-spacing: .08em; text-transform: uppercase;
+}
+.splash-sub {
+  font-size: .8rem; color: var(--text3); letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.splash-bar-wrap {
+  width: 160px; height: 3px; background: rgba(33,150,196,0.15);
+  border-radius: 2px; overflow: hidden; margin-top: 8px;
+}
+.splash-bar {
+  height: 100%; border-radius: 2px;
+  background: linear-gradient(90deg, var(--blue), var(--sky));
+  animation: splashLoad 1.4s ease-out forwards;
+}
+@keyframes splashLoad { from { width:0 } to { width:100% } }
+
+/* ── Install Banner ──────────────────────────────── */
+#installBanner {
+  display: none; position: fixed; bottom: 80px; left: 16px; right: 16px;
+  z-index: 890; background: var(--card);
+  border: 1px solid var(--border); border-radius: 14px;
+  padding: 14px 16px; gap: 12px; align-items: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,.5);
+  animation: slideUp .3s ease;
+}
+#installBanner.show { display: flex; }
+@keyframes slideUp { from { transform:translateY(20px); opacity:0 } to { transform:none; opacity:1 } }
+.install-icon { font-size: 2rem; flex-shrink: 0; }
+.install-text { flex: 1; }
+.install-text strong { font-size: .9rem; color: var(--text); display: block; margin-bottom: 2px; }
+.install-text span { font-size: .78rem; color: var(--text3); }
+.install-btn {
+  background: var(--blue); color: white; border: none;
+  padding: 9px 16px; border-radius: 8px; font-size: .82rem;
+  font-weight: 700; cursor: pointer; white-space: nowrap;
+  font-family: var(--sans);
+}
+.install-btn:hover { background: var(--sky); }
+.install-close {
+  background: none; border: none; color: var(--text3);
+  font-size: 1.2rem; cursor: pointer; padding: 4px; flex-shrink: 0;
+}
+
+/* ── Bottom Navigation Bar (Mobile App feel) ─────── */
+#bottomNav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 800;
+  background: rgba(8,15,26,0.97);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+  display: flex; justify-content: space-around; align-items: flex-end;
+}
+.bnav-item {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  flex: 1; padding: 4px 2px; cursor: pointer;
+  background: none; border: none; color: var(--text3);
+  transition: color .2s; font-family: var(--sans);
+  -webkit-tap-highlight-color: transparent;
+  min-width: 44px; min-height: 44px; justify-content: center;
+}
+.bnav-item.active { color: var(--sky); }
+.bnav-item:active { transform: scale(.92); }
+.bnav-icon { font-size: 1.35rem; line-height: 1; }
+.bnav-label { font-size: 9px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; line-height: 1; }
+
+/* Adjust page bottom padding when bottom nav shows */
+body.has-bottom-nav { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
+
+/* ── Chapter quick-nav drawer (slide up) ─────────── */
+#chapterDrawer {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 850;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-radius: 20px 20px 0 0;
+  padding: 0 16px max(20px, env(safe-area-inset-bottom));
+  transform: translateY(100%);
+  transition: transform .3s cubic-bezier(.32,.72,0,1);
+  max-height: 80svh; overflow-y: auto;
+}
+#chapterDrawer.open { transform: translateY(0); }
+.drawer-handle {
+  width: 36px; height: 4px; background: var(--border);
+  border-radius: 2px; margin: 12px auto 18px; display: block;
+}
+.drawer-title {
+  font-size: .72rem; font-weight: 800; letter-spacing: .1em;
+  color: var(--text3); text-transform: uppercase; margin-bottom: 14px;
+  padding: 0 2px;
+}
+.drawer-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  margin-bottom: 8px;
+}
+.drawer-btn {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 12px;
+  cursor: pointer; transition: all .15s; text-align: left;
+  font-family: var(--sans); -webkit-tap-highlight-color: transparent;
+}
+.drawer-btn:hover, .drawer-btn:active { background: var(--card); border-color: var(--sky); }
+.drawer-btn-num {
+  width: 28px; height: 28px; border-radius: 7px;
+  background: rgba(33,150,196,0.15); color: var(--sky);
+  font-size: .7rem; font-weight: 900; display: flex;
+  align-items: center; justify-content: center; flex-shrink: 0;
+}
+.drawer-btn-name { font-size: .78rem; font-weight: 600; color: var(--text2); line-height: 1.3; }
+.drawer-btn-sub { font-size: .68rem; color: var(--text3); margin-top: 1px; }
+.drawer-overlay {
+  display: none; position: fixed; inset: 0; z-index: 840;
+  background: rgba(0,0,0,.5); backdrop-filter: blur(2px);
+}
+.drawer-overlay.show { display: block; }
+
+/* ── Search overlay ──────────────────────────────── */
+#searchOverlay {
+  position: fixed; inset: 0; z-index: 870;
+  background: rgba(8,15,26,0.97);
+  display: none; flex-direction: column;
+  padding: env(safe-area-inset-top, 0) 0 0;
+}
+#searchOverlay.open { display: flex; }
+.search-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px; border-bottom: 1px solid var(--border);
+}
+#searchInput {
+  flex: 1; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 14px; color: var(--text);
+  font-size: 1rem; font-family: var(--sans); outline: none;
+}
+#searchInput:focus { border-color: var(--sky); }
+.search-cancel {
+  background: none; border: none; color: var(--sky);
+  font-size: .9rem; font-weight: 700; cursor: pointer;
+  font-family: var(--sans); padding: 8px 4px; white-space: nowrap;
+}
+#searchResults {
+  flex: 1; overflow-y: auto; padding: 12px 16px;
+}
+.search-result-item {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px; margin-bottom: 8px;
+  cursor: pointer; transition: all .15s;
+}
+.search-result-item:hover { border-color: var(--sky); background: var(--card); }
+.sr-chapter { font-size: .7rem; color: var(--gold2); font-weight: 700;
+  text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+.sr-title { font-size: .92rem; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.sr-snippet { font-size: .78rem; color: var(--text2); line-height: 1.5; }
+.sr-snippet mark { background: rgba(200,150,30,0.25); color: var(--gold2);
+  border-radius: 2px; padding: 0 2px; }
+.search-empty { text-align: center; padding: 48px 16px; color: var(--text3); font-size: .9rem; }
+
+/* ── Progress indicator (app-style) ─────────────── */
+.chapter-progress-ring {
+  width: 20px; height: 20px; flex-shrink: 0;
+}
+
+/* ── Reading progress bar per chapter ───────────── */
+.ch-read-indicator {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--blue), var(--sky));
+  transform-origin: left; transform: scaleX(0);
+  transition: transform .1s;
+}
+
+/* ── Floating action speed-dial ──────────────────── */
+#fab {
+  position: fixed; bottom: 80px; right: 20px; z-index: 800;
+  width: 48px; height: 48px; border-radius: 14px;
+  background: var(--blue); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; color: white;
+  box-shadow: 0 4px 20px rgba(33,150,196,.4);
+  transition: all .2s; -webkit-tap-highlight-color: transparent;
+}
+#fab:hover { background: var(--sky); transform: scale(1.05); }
+#fab.hidden { opacity: 0; transform: scale(.8); pointer-events: none; }
+
+/* ── On mobile: show bottom nav, hide top tabs ───── */
+@media (max-width: 480px) {
+  #bottomNav { display: flex; }
+  body.has-bottom-nav #back-top { bottom: 76px; }
+  body.has-bottom-nav #installBanner { bottom: 76px; }
+  body.has-bottom-nav #fab { bottom: 76px; right: 16px; }
+}
+/* On tablet: show bottom nav too */
+@media (min-width: 481px) and (max-width: 1024px) {
+  #bottomNav { display: flex; }
+  body.has-bottom-nav #back-top { bottom: 80px; }
+  body.has-bottom-nav #installBanner { bottom: 80px; }
+}
+
+/* ── MOBILE MENU ─────────────────────────────────── */
+.mob-ch-btn {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 8px; color: var(--text2);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  text-align: center; line-height: 1.3; transition: all .15s;
+  font-family: var(--sans);
+}
+.mob-ch-btn:hover, .mob-ch-btn:active { background: var(--card); color: var(--sky); border-color: var(--sky); }
+@media (max-width: 480px) {
+  .nav-tabs  { display: none !important; }
+  #menuBtn   { display: flex !important; }
+}
+@media (min-width: 481px) {
+  #mobileMenu { display: none !important; }
+  #menuBtn    { display: none !important; }
+}
+
+/* ── PRINT ───────────────────────────────────────── */
+@media print {
+  #topnav, .nav-progress, #back-top, .hero-circle, .hero-grid { display: none !important; }
+  body { background: white !important; color: black !important; font-size: 11pt; }
+  .chapter-section { padding: 24pt 0; border-top: 1pt solid #ccc; page-break-inside: avoid; }
+  .chapter-body, .chapter-header { max-width: 100%; padding: 0 12pt; }
+  .formula { background: #f5f5f5 !important; color: #000 !important; border: 1pt solid #999; font-size: 9pt; }
+  .infobox-header { color: #000 !important; }
+  .infobox-body   { background: #f9f9f9 !important; }
+  .infobox-body p, .prose, td, .step-text, .cl-item { color: #111 !important; font-size: 10pt; }
+  thead th { background: #333 !important; color: white !important; }
+  .card, .vspeed-card, .rcc-card { break-inside: avoid; border: 1pt solid #ccc !important; }
+  .card-grid, .vspeed-grid, .rcc-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  h2, h3, .section-h2, .section-h3 { color: #000 !important; }
+  a { color: #000 !important; text-decoration: none !important; }
+  #hero { min-height: auto !important; padding: 24pt 12pt; }
+  .hero-title { font-size: 28pt !important; color: #000 !important; }
+  .hero-sub { color: #333 !important; }
+  .stat-num { color: #000 !important; }
+  .glossary-grid { grid-template-columns: repeat(3, 1fr) !important; }
+  .table-wrap { overflow: visible !important; }
+  table { font-size: 9pt !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── SPLASH SCREEN ── -->
+<div id="splash">
+  <div class="splash-icon">✈</div>
+  <div class="splash-title">FD Performance</div>
+  <div class="splash-sub">Flight Dispatcher Handbook</div>
+  <div class="splash-bar-wrap"><div class="splash-bar"></div></div>
+</div>
+
+<!-- ── DRAWER OVERLAY ── -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+<!-- ── CHAPTER DRAWER (slide up) ── -->
+<div id="chapterDrawer">
+  <span class="drawer-handle"></span>
+  <div class="drawer-title">เลือกบท</div>
+  <div class="drawer-grid">
+    <button class="drawer-btn" onclick="drawerGo('ch1')">
+      <div class="drawer-btn-num">1</div>
+      <div><div class="drawer-btn-name">Atmosphere & ISA</div><div class="drawer-btn-sub">ISA · Mach · Cold Temp</div></div>
+    </button>
+    <button class="drawer-btn" onclick="drawerGo('ch2')">
+      <div class="drawer-btn-num">2</div>
+      <div><div class="drawer-btn-name">Aerodynamics</div><div class="drawer-btn-sub">Lift · Drag · V-Speeds</div></div>
+    </button>
+    <button class="drawer-btn" onclick="drawerGo('ch3')">
+      <div class="drawer-btn-num">3</div>
+      <div><div class="drawer-btn-name">Weight & Balance</div><div class="drawer-btn-sub">TOW · ZFW · CG</div></div>
+    </button>
+    <button class="drawer-btn" onclick="drawerGo('ch4')">
+      <div class="drawer-btn-num">4</div>
+      <div><div class="drawer-btn-name">Takeoff Performance</div><div class="drawer-btn-sub">V1 · Runway · RCAM</div></div>
+    </button>
+    <button class="drawer-btn" onclick="drawerGo('ch5')">
+      <div class="drawer-btn-num">5</div>
+      <div><div class="drawer-btn-name">En-Route & Cruise</div><div class="drawer-btn-sub">CI · Drift Down · ETOPS</div></div>
+    </button>
+    <button class="drawer-btn" onclick="drawerGo('ch6')">
+      <div class="drawer-btn-num">6</div>
+      <div><div class="drawer-btn-name">Landing Performance</div><div class="drawer-btn-sub">LDR · Approach Climb</div></div>
+    </button>
+    <button class="drawer-btn" onclick="drawerGo('ch7')">
+      <div class="drawer-btn-num">7</div>
+      <div><div class="drawer-btn-name">Fuel Planning</div><div class="drawer-btn-sub">Reserves · ETOPS Fuel</div></div>
+    </button>
+    <button class="drawer-btn" onclick="drawerGo('ch8')">
+      <div class="drawer-btn-num">8</div>
+      <div><div class="drawer-btn-name">Dispatch Workflow</div><div class="drawer-btn-sub">MEL · Release · Case</div></div>
+    </button>
+    <button class="drawer-btn" onclick="drawerGo('ch9')">
+      <div class="drawer-btn-num">9</div>
+      <div><div class="drawer-btn-name">Flex Takeoff</div><div class="drawer-btn-sub">Reduced Thrust · Derate</div></div>
+    </button>
+    <button class="drawer-btn" onclick="drawerGo('ch10')">
+      <div class="drawer-btn-num">10</div>
+      <div><div class="drawer-btn-name">PNR · PET</div><div class="drawer-btn-sub">Critical Nav Points</div></div>
+    </button>
+    <button class="drawer-btn" onclick="drawerGo('ch11')">
+      <div class="drawer-btn-num">11</div>
+      <div><div class="drawer-btn-name">Emergency Perf</div><div class="drawer-btn-sub">Depress · Overweight</div></div>
+    </button>
+    <button class="drawer-btn" onclick="drawerGo('glossary')" style="grid-column:1/-1; border-color:rgba(33,150,196,0.3)">
+      <div class="drawer-btn-num" style="background:rgba(14,124,110,0.2);color:#4DD9C6">G</div>
+      <div><div class="drawer-btn-name" style="color:var(--sky)">Glossary & Abbreviations</div><div class="drawer-btn-sub">คำย่อและคำศัพท์ทั้งหมด</div></div>
+    </button>
+  </div>
+</div>
+
+<!-- ── SEARCH OVERLAY ── -->
+<div id="searchOverlay">
+  <div class="search-header">
+    <input type="search" id="searchInput" placeholder="ค้นหา... เช่น V1, ETOPS, Mach, ZFW" autocomplete="off" autocorrect="off" spellcheck="false">
+    <button class="search-cancel" onclick="closeSearch()">ยกเลิก</button>
+  </div>
+  <div id="searchResults">
+    <div class="search-empty">🔍<br>พิมพ์คำที่ต้องการค้นหา</div>
+  </div>
+</div>
+
+<!-- ── BOTTOM NAVIGATION ── -->
+<nav id="bottomNav">
+  <button class="bnav-item active" id="bnavHome" onclick="bnavClick('home')">
+    <span class="bnav-icon">🏠</span>
+    <span class="bnav-label">Home</span>
+  </button>
+  <button class="bnav-item" id="bnavChapters" onclick="bnavClick('chapters')">
+    <span class="bnav-icon">📖</span>
+    <span class="bnav-label">บทเรียน</span>
+  </button>
+  <button class="bnav-item" id="bnavSearch" onclick="bnavClick('search')">
+    <span class="bnav-icon">🔍</span>
+    <span class="bnav-label">ค้นหา</span>
+  </button>
+  <button class="bnav-item" id="bnavGlossary" onclick="bnavClick('glossary')">
+    <span class="bnav-icon">📚</span>
+    <span class="bnav-label">Glossary</span>
+  </button>
+</nav>
+
+<!-- ── INSTALL BANNER ── -->
+<div id="installBanner">
+  <div class="install-icon">✈</div>
+  <div class="install-text">
+    <strong>ติดตั้ง FD Performance</strong>
+    <span>บันทึกไว้ใน Home Screen อ่านได้ Offline</span>
+  </div>
+  <button class="install-btn" id="installBtn">ติดตั้ง</button>
+  <button class="install-close" onclick="document.getElementById('installBanner').classList.remove('show')">✕</button>
+</div>
+
+<!-- TOP NAV -->
+<nav id="topnav">
+  <div class="nav-brand">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+      <polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
+    </svg>
+    <span>PERF · DISPATCH</span>
+  </div>
+  <div class="nav-tabs" id="navTabs">
+    <button class="nav-tab" onclick="scrollToSection('hero')">Home</button>
+    <button class="nav-tab" onclick="scrollToSection('ch1')">CH 1</button>
+    <button class="nav-tab" onclick="scrollToSection('ch2')">CH 2</button>
+    <button class="nav-tab" onclick="scrollToSection('ch3')">CH 3</button>
+    <button class="nav-tab" onclick="scrollToSection('ch4')">CH 4</button>
+    <button class="nav-tab" onclick="scrollToSection('ch5')">CH 5</button>
+    <button class="nav-tab" onclick="scrollToSection('ch6')">CH 6</button>
+    <button class="nav-tab" onclick="scrollToSection('ch7')">CH 7</button>
+    <button class="nav-tab" onclick="scrollToSection('ch8')">CH 8</button>
+    <button class="nav-tab" onclick="scrollToSection('ch9')">CH 9</button>
+    <button class="nav-tab" onclick="scrollToSection('ch10')">CH 10</button>
+    <button class="nav-tab" onclick="scrollToSection('ch11')">CH 11</button>
+    <button class="nav-tab" onclick="scrollToSection('glossary')">Glossary</button>
+  </div>
+  <!-- Mobile hamburger -->
+  <button id="menuBtn" onclick="toggleMenu()" aria-label="Toggle chapter menu" style="
+    display:none; background:none; border:none; cursor:pointer;
+    color:var(--sky); padding:6px; margin-left:auto; flex-shrink:0;
+    flex-direction:column; gap:5px; align-items:center; justify-content:center;
+    width:36px; height:36px; border-radius:6px;
+  ">
+    <span id="mbLine1" style="display:block;width:20px;height:2px;background:currentColor;border-radius:1px;transition:transform .25s,opacity .25s"></span>
+    <span id="mbLine2" style="display:block;width:20px;height:2px;background:currentColor;border-radius:1px;transition:transform .25s"></span>
+    <span id="mbLine3" style="display:block;width:20px;height:2px;background:currentColor;border-radius:1px;transition:transform .25s,opacity .25s"></span>
+  </button>
+</nav>
+<div class="nav-progress"><div class="nav-progress-bar" id="progressBar"></div></div>
+
+<!-- Mobile dropdown menu -->
+<div id="mobileMenu" style="
+  display:none; position:fixed; top:50px; left:0; right:0; z-index:998;
+  background:rgba(8,15,26,0.97); backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  padding:12px 16px 16px; grid-template-columns:repeat(3,1fr); gap:8px;
+">
+  <button class="mob-ch-btn" onclick="mobGo('hero')">🏠 Home</button>
+  <button class="mob-ch-btn" onclick="mobGo('ch1')">📖 CH 1 · ISA</button>
+  <button class="mob-ch-btn" onclick="mobGo('ch2')">✈️ CH 2 · Aero</button>
+  <button class="mob-ch-btn" onclick="mobGo('ch3')">⚖️ CH 3 · W&B</button>
+  <button class="mob-ch-btn" onclick="mobGo('ch4')">🛫 CH 4 · T/O</button>
+  <button class="mob-ch-btn" onclick="mobGo('ch5')">🗺️ CH 5 · Cruise</button>
+  <button class="mob-ch-btn" onclick="mobGo('ch6')">🛬 CH 6 · Landing</button>
+  <button class="mob-ch-btn" onclick="mobGo('ch7')">⛽ CH 7 · Fuel</button>
+  <button class="mob-ch-btn" onclick="mobGo('ch8')">📋 CH 8 · Dispatch</button>
+  <button class="mob-ch-btn" onclick="mobGo('ch9')">🔥 CH 9 · Flex</button>
+  <button class="mob-ch-btn" onclick="mobGo('ch10')">📍 CH 10 · PNR</button>
+  <button class="mob-ch-btn" onclick="mobGo('ch11')">🚨 CH 11 · Emergency</button>
+  <button class="mob-ch-btn" onclick="mobGo('glossary')" style="grid-column:1/-1">📚 Glossary</button>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-circle"></div>
+  <div class="hero-eyebrow">Flight Dispatcher Handbook</div>
+  <h1 class="hero-title">Aircraft<br><em>Performance</em></h1>
+  <p class="hero-sub">คู่มือสมรรถนะอากาศยานสำหรับนักจัดการการบิน — ครอบคลุมตั้งแต่พื้นฐาน ISA จนถึง ETOPS Fuel Planning และ Dispatch Workflow ในการปฏิบัติงานจริง</p>
+  <div class="hero-stats">
+    <div class="stat-item"><div class="stat-num">11</div><div class="stat-lbl">บทหลัก</div></div>
+    <div class="stat-item"><div class="stat-num">ICAO</div><div class="stat-lbl">Annex 6 / FAR 121</div></div>
+    <div class="stat-item"><div class="stat-num">2025</div><div class="stat-lbl">Edition</div></div>
+  </div>
+  <div class="hero-chapters">
+    <div class="chapter-pill" onclick="scrollToSection('ch1')"><span class="ch-num">01</span> Atmosphere & ISA</div>
+    <div class="chapter-pill" onclick="scrollToSection('ch2')"><span class="ch-num">02</span> Aerodynamics</div>
+    <div class="chapter-pill" onclick="scrollToSection('ch3')"><span class="ch-num">03</span> Weight & Balance</div>
+    <div class="chapter-pill" onclick="scrollToSection('ch4')"><span class="ch-num">04</span> Takeoff Performance</div>
+    <div class="chapter-pill" onclick="scrollToSection('ch5')"><span class="ch-num">05</span> En-Route & Cruise</div>
+    <div class="chapter-pill" onclick="scrollToSection('ch6')"><span class="ch-num">06</span> Landing Performance</div>
+    <div class="chapter-pill" onclick="scrollToSection('ch7')"><span class="ch-num">07</span> Fuel Planning & ETOPS</div>
+    <div class="chapter-pill" onclick="scrollToSection('ch8')"><span class="ch-num">08</span> Dispatch Workflow</div>
+    <div class="chapter-pill" onclick="scrollToSection('ch9')"><span class="ch-num">09</span> Flex / Assumed Temp Takeoff</div>
+    <div class="chapter-pill" onclick="scrollToSection('ch10')"><span class="ch-num">10</span> PNR · PET & Critical Points</div>
+    <div class="chapter-pill" onclick="scrollToSection('ch11')"><span class="ch-num">11</span> Emergency Performance</div>
+  </div>
+</section>
+
+<div id="main">
+
+<!-- ═══════════════════════════════════════════════════
+     CHAPTER 1 — ATMOSPHERE
+════════════════════════════════════════════════════ -->
+<section class="chapter-section" id="ch1">
+  <div class="chapter-header">
+    <div class="ch-badge"><span>1</span> Atmosphere & Standard Day</div>
+    <h2 class="ch-title">International Standard<br>Atmosphere (ISA)</h2>
+    <p class="ch-desc">ทุกการคำนวณ Performance ในการบินพาณิชย์อ้างอิงจาก ISA บรรยากาศมาตรฐานที่ ICAO กำหนดขึ้น ครอบคลุมตั้งแต่สภาวะมาตรฐาน, Mach Number, Altimetry Settings, ไปจนถึง Cold Temperature Correction ที่ ICAO บังคับใช้ตั้งแต่ปี 2020</p>
+  </div>
+  <div class="chapter-body">
+
+    <h3 class="section-h2">1.1 ISA Sea Level Standard Conditions</h3>
+    <p class="prose">ICAO กำหนดสภาวะมาตรฐาน ณ ระดับน้ำทะเลไว้เป็นจุดอ้างอิงหลักของอุตสาหกรรมการบินโลก ค่าเหล่านี้ใช้ในการออกแบบอากาศยานและสร้าง Performance Charts ทุกชุดใน AFM:</p>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🌡️</div>
+        <div class="card-title">Temperature (T₀)</div>
+        <div class="card-body"><strong style="color:var(--sky)">15 °C</strong> (288.15 K · 59 °F)<br>อุณหภูมิมาตรฐาน ณ ระดับน้ำทะเล</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔵</div>
+        <div class="card-title">Pressure (P₀)</div>
+        <div class="card-body"><strong style="color:var(--sky)">1013.25 hPa</strong> (29.92 in Hg)<br>ความดันบรรยากาศมาตรฐาน</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">💨</div>
+        <div class="card-title">Density (ρ₀)</div>
+        <div class="card-body"><strong style="color:var(--sky)">1.225 kg/m³</strong><br>ความหนาแน่นอากาศมาตรฐาน</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔊</div>
+        <div class="card-title">Speed of Sound (a₀)</div>
+        <div class="card-body"><strong style="color:var(--sky)">661.5 kt</strong> (340.3 m/s)<br>ฐานคำนวณ Mach Number ทุกค่า</div>
+      </div>
+    </div>
+
+    <h3 class="section-h2">1.2 Temperature Lapse Rate & Tropopause</h3>
+    <p class="prose">บรรยากาศแบ่งชั้นที่มีนัยสำคัญต่อการบินออกเป็น 3 ชั้นหลัก โดย Tropopause มีผลพิเศษต่อ Cruise Performance:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ชั้นบรรยากาศ</th><th>ระดับความสูง</th><th>Lapse Rate</th><th>ผลต่อการบิน</th></tr></thead>
+        <tbody>
+          <tr><td>Troposphere</td><td>0 – 36,089 ft</td><td>−1.98 °C / 1,000 ft</td><td>Density ลดตามความสูง — ชั้นหลักที่บินพาณิชย์</td></tr>
+          <tr><td>Tropopause</td><td>36,089 – 65,617 ft</td><td>คงที่ −56.5 °C</td><td>Isothermal — Jet Stream รุนแรง, Turbulence CAT บ่อย</td></tr>
+          <tr><td>Stratosphere</td><td>> 65,617 ft</td><td>อุณหภูมิเพิ่มขึ้น</td><td>เกินระดับบินพาณิชย์ทุกชนิด</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="infobox blue">
+      <div class="infobox-header">💡 ผล Tropopause ต่อ Cruise Performance</div>
+      <div class="infobox-body">
+        <p>เมื่อบินถึง Tropopause (FL360+) อุณหภูมิคงที่ที่ −56.5°C ไม่ว่าจะขึ้นสูงอีกเท่าไร ทำให้ <strong>Speed of Sound คงที่</strong> ดังนั้น Mach Number ที่ MMO จะให้ TAS เท่าเดิมไม่ว่าจะบินที่ FL370 หรือ FL410 — แต่ Density ยิ่งต่ำ Fuel Burn/NM ยิ่งดี</p>
+        <p>• Jet Stream ที่ Tropopause อาจให้ Tailwind 100+ kt บน Westbound/Eastbound Flights</p>
+        <p>• Dispatcher ใช้ Wind Aloft Forecast (FD Charts) วางแผน Routing ได้ประโยชน์จาก Jet Stream</p>
+      </div>
+    </div>
+
+    <h3 class="section-h3">ISA Deviation (ΔISA)</h3>
+    <div class="formula">ΔISA = OAT − ISA Temp at that Altitude
+
+ตัวอย่าง: ที่ FL350 → ISA Temp = 15 − (2 × 35) = −55°C
+          OAT จริง = −45°C → ΔISA = +10°C (ISA+10)</div>
+    <div class="infobox red">
+      <div class="infobox-header">⚠️ ผลกระทบของ High ISA (Hot Day) ต่อ Dispatcher</div>
+      <div class="infobox-body">
+        <p>• <strong>Takeoff Weight ลดลง</strong> — Density Altitude สูงขึ้น Engine ผลิต Thrust ได้น้อยลง</p>
+        <p>• <strong>V-speeds เปลี่ยนแปลง</strong> — V1, VR, V2 อาจสูงขึ้นตาม Density</p>
+        <p>• <strong>Fuel Burn เพิ่มขึ้น</strong> — เครื่องยนต์ทำงานหนักขึ้น ต้องวางแผน Fuel เพิ่ม</p>
+        <p>• <strong>Initial Cruise Altitude ต่ำลง</strong> — Climb Performance แย่ลง Step Climb ช้าลง</p>
+        <p>• <strong>Climb Time ยาวนานขึ้น</strong> — Trip Fuel อาจต้องปรับเพิ่มในเที่ยวบิน Hot &amp; High</p>
+      </div>
+    </div>
+
+    <h3 class="section-h2">1.3 Mach Number & Speed of Sound</h3>
+    <p class="prose">Mach Number คืออัตราส่วนระหว่าง TAS กับ Speed of Sound ณ ระดับนั้น มีความสำคัญมากสำหรับ Jet Transport เพราะ <strong>MMO</strong> (Max Operating Mach) เป็น Hard Limit ที่เปลี่ยนตามอุณหภูมิ:</p>
+    <div class="formula">Mach Number (M) = TAS / Speed of Sound (a)
+
+Speed of Sound (kt) = 38.94 × √(T in Kelvin)
+                    = 661.5 kt ที่ ISA Sea Level (288.15 K)
+                    = 573.6 kt ที่ Tropopause (216.65 K = −56.5°C)</div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ระดับ / Temp</th><th>Speed of Sound</th><th>TAS ที่ Mach 0.82 (ตัวอย่าง)</th><th>หมายเหตุ</th></tr></thead>
+        <tbody>
+          <tr><td>Sea Level / ISA +0</td><td>661.5 kt</td><td>542 kt</td><td>Hot = Speed of Sound สูงขึ้น</td></tr>
+          <tr><td>FL250 / ISA +0</td><td>613 kt</td><td>503 kt</td><td>Mach ≈ IAS + Alt Correction</td></tr>
+          <tr><td>FL360 / ISA +0</td><td>573 kt</td><td>470 kt</td><td>Tropopause — คงที่ตั้งแต่นี้ขึ้นไป</td></tr>
+          <tr><td>FL390 / ISA +0</td><td>573 kt</td><td>470 kt</td><td>TAS เท่ากับ FL360 แต่ Density ต่ำกว่า</td></tr>
+          <tr><td>FL350 / ISA+10</td><td>580 kt</td><td>476 kt</td><td>Warm Day → Speed of Sound สูงขึ้น</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="infobox gold">
+      <div class="infobox-header">📌 Crossover Altitude — จุดเปลี่ยน IAS → Mach</div>
+      <div class="infobox-body">
+        <p>ระหว่าง Climb ขึ้น FMS จะ Control Speed เป็น IAS ก่อน (เช่น 250 kt / 300 kt) แล้วเมื่อถึง <strong>Crossover Altitude</strong> จะเปลี่ยนไป Control เป็น Mach (เช่น Mach 0.78)</p>
+        <p>• B737-800 Crossover ≈ FL280 ที่ M0.74 / 310 KIAS</p>
+        <p>• B777-300ER Crossover ≈ FL310 ที่ M0.84 / 330 KIAS</p>
+        <p>• Dispatcher ต้องรู้ว่า Trip Fuel คิดจาก Mach ใดเพื่อ Verify กับ FMS Profile</p>
+      </div>
+    </div>
+
+    <h3 class="section-h2">1.4 Altitude Types & Altimeter Settings</h3>
+    <p class="prose">Dispatcher ต้องเข้าใจความแตกต่างของ Altitude ทุกประเภท และ Altimeter Settings ที่ใช้ในแต่ละ Phase ของการบิน:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ประเภท Altitude</th><th>นิยาม</th><th>การใช้งาน</th></tr></thead>
+        <tbody>
+          <tr><td>Indicated Altitude</td><td>อ่านจาก Altimeter ตรงๆ โดยตั้ง QNH/QFE</td><td>แสดงใน Cockpit ระหว่างบิน</td></tr>
+          <tr><td>True Altitude</td><td>ความสูงจริงจาก MSL — คำนวณจาก Temperature Correction</td><td>Obstacle Clearance, MORA, Cold Temp Correction</td></tr>
+          <tr><td>Pressure Altitude</td><td>Altitude เทียบกับ 1013.25 hPa (Standard Setting)</td><td>Performance Charts, Flight Level, RVSM</td></tr>
+          <tr><td>Density Altitude</td><td>Pressure Altitude ± Temperature Deviation</td><td><strong>Performance ที่แท้จริง</strong> — ใช้อ่าน Charts</td></tr>
+          <tr><td>Absolute Altitude</td><td>ความสูงจากพื้นดินจริง (AGL)</td><td>Terrain Clearance, GPWS Reference</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="section-h3">QNH · QFE · QNE — Altimeter Settings ที่ Dispatcher ต้องรู้</h3>
+    <p class="prose">ทั้งสามค่านี้คือ Altimeter Setting — ค่าที่ตั้งใน Kollsman Window เพื่อให้ Altimeter แสดงความสูงในแบบที่ต้องการ ความแตกต่างอยู่ที่ <strong>Reference Pressure ที่เลือกใช้</strong> ซึ่งทำให้ตัวเลขที่แสดงหมายความต่างกันโดยสิ้นเชิง:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Setting</th><th>ตั้ง Altimeter เป็น</th><th>แสดงผล</th><th>ใช้เมื่อ</th></tr></thead>
+        <tbody>
+          <tr><td><strong style="color:var(--sky)">QNH</strong></td><td>ความดันจริง ณ MSL ของสนามบิน (เปลี่ยนตาม Weather)</td><td>ความสูงจาก MSL จริง (ft AMSL) — Airport แสดง Elevation</td><td>Taxi · Takeoff · Approach · Landing ทุกสนามบิน</td></tr>
+          <tr><td><strong style="color:var(--gold2)">QFE</strong></td><td>ความดันที่ Runway Level จริง</td><td>ความสูงจาก Runway (AGL) — แสดง 0 ขณะ Touchdown</td><td>บางสนามบินใน CIS/Russia เท่านั้น</td></tr>
+          <tr><td><strong style="color:#4DD99A">QNE</strong></td><td>Standard 1013.25 hPa <em>ตายตัว</em> ไม่เปลี่ยนตาม Weather</td><td>Pressure Altitude = Flight Level — ไม่ใช่ความสูงจริง MSL</td><td>เหนือ Transition Altitude — ทุก Aircraft ใช้เหมือนกันหมด</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="infobox blue">
+      <div class="infobox-header">💡 QNH กับ QNE — เหมือนและต่างกันอย่างไร</div>
+      <div class="infobox-body">
+        <p><strong>สิ่งที่เหมือนกัน:</strong> ทั้งคู่ใช้ Barometric Pressure เป็นฐานในการวัดความสูง และทั้งคู่คือ Altimeter Setting ที่ตั้งใน Kollsman Window</p>
+        <p><strong>สิ่งที่ต่างกัน — Reference Pressure:</strong></p>
+        <p>• <strong>QNH</strong> ใช้ความดันจริง ณ MSL ของสนามบินนั้น ซึ่งเปลี่ยนตาม Weather และต่างกันแต่ละสนามบิน → Altimeter แสดงความสูงจาก MSL ที่แท้จริง</p>
+        <p>• <strong>QNE</strong> ใช้ 1013.25 hPa คงที่เสมอ → Altimeter แสดง Pressure Altitude ซึ่ง <em>อาจไม่ใช่</em> ความสูงจาก MSL จริง แต่ทุกอากาศยานได้ค่าเดียวกัน</p>
+        <p><strong>ทำไมต้องเปลี่ยน?</strong> ที่ High Altitude อากาศยานนับร้อยลำอยู่ในอากาศพร้อมกัน ถ้าต่างคนต่าง QNH ต่างกัน ค่า Altitude จะเทียบกันไม่ได้ → เปลี่ยนเป็น QNE (1013) เหมือนกันหมด เพื่อให้ Vertical Separation มีความหมายตรงกัน</p>
+      </div>
+    </div>
+
+    <div class="infobox gold">
+      <div class="infobox-header">📌 ตัวอย่างที่ต้องระวัง: FL310 ไม่ใช่ 31,000 ft จาก MSL เสมอไป</div>
+      <div class="infobox-body">
+        <p>สนามบินที่ Elevation 5,000 ft · QNH = 1013 hPa (วันนั้น Standard พอดี)</p>
+        <p>• อากาศยานบิน FL310 = 31,000 ft Pressure Altitude</p>
+        <p>• ความสูงจากพื้นดินจริงๆ = 31,000 − 5,000 = <strong>26,000 ft เท่านั้น</strong></p>
+        <p>สนามบินที่ Elevation 5,000 ft · QNH = 983 hPa (Low Pressure Day)</p>
+        <p>• FL310 = 31,000 ft Pressure Altitude แต่ความสูงจาก MSL จริง ≈ 31,000 − 900 ft (correction) = <strong>~30,100 ft</strong></p>
+        <p>→ Dispatcher ต้องใช้ True Altitude (ไม่ใช่ FL) เมื่อตรวจ Terrain Clearance บน OFP</p>
+      </div>
+    </div>
+
+    <div class="infobox blue">
+      <div class="infobox-header">📐 Transition Altitude vs Transition Level</div>
+      <div class="infobox-body">
+        <p>• <strong>Transition Altitude (TA):</strong> ระดับสูงสุดที่ใช้ QNH ขณะ Climb — เมื่อ Passing TA ให้เปลี่ยนเป็น QNE (1013.25 hPa)</p>
+        <p>• <strong>Transition Level (TL):</strong> ระดับต่ำสุดที่ใช้ Flight Level ขณะ Descend — เมื่อ Descend ผ่าน TL ให้เปลี่ยนเป็น QNH</p>
+        <p>• ระหว่าง TA กับ TL คือ <strong>Transition Layer</strong> — ห้ามบิน Cruise ในชั้นนี้</p>
+        <p>• TA ขึ้นกับแต่ละประเทศ: ไทย = 11,000 ft · UK = 18,000 ft · สหรัฐอเมริกา = 18,000 ft · บางประเทศ = 5,000 ft</p>
+        <p>• Dispatcher ต้องระบุ TA/TL ใน Flight Plan ให้ถูกต้องตาม AIP ของแต่ละประเทศ</p>
+      </div>
+    </div>
+
+    <h3 class="section-h3">QNH Correction — ผลต่อ Pressure Altitude</h3>
+    <div class="formula">Pressure Altitude Correction = (1013 − QNH) × 27 ft
+
+ตัวอย่าง: QNH = 983 hPa → Correction = (1013 − 983) × 27 = +810 ft
+          → True Altitude สูงกว่า FL ที่แสดง 810 ft
+          QNH = 1033 hPa → Correction = (1013 − 1033) × 27 = −540 ft
+          → True Altitude ต่ำกว่า FL ที่แสดง 540 ft</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>QNH (hPa)</th><th>Pressure Alt vs True Alt</th><th>ผลต่อ Terrain Clearance</th><th>ระดับความเสี่ยง</th></tr></thead>
+        <tbody>
+          <tr><td>1033 hPa (High)</td><td>Pressure Alt สูงกว่า True Alt 540 ft</td><td>Altimeter แสดงสูงกว่าจริง — อากาศยานต่ำกว่าที่คิด</td><td>ระวัง! โดยเฉพาะ IFR</td></tr>
+          <tr><td>1013 hPa (Standard)</td><td>เท่ากัน</td><td>ไม่มี Error</td><td>ปกติ</td></tr>
+          <tr><td>993 hPa</td><td>Pressure Alt ต่ำกว่า True Alt 540 ft</td><td>Altimeter แสดงต่ำกว่าจริง — อากาศยานสูงกว่าที่คิด</td><td>ปลอดภัยกว่า แต่ Fuel ลดลง</td></tr>
+          <tr><td>983 hPa (Very Low)</td><td>Pressure Alt ต่ำกว่า True Alt 810 ft</td><td>Terrain ดูสูงขึ้น 810 ft จาก Altimeter ที่แสดง</td><td>ระวังมาก MSA</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="section-h3">การคำนวณ Density Altitude</h3>
+    <div class="formula">Density Altitude ≈ Pressure Altitude + [120 × (OAT − ISA Temp at PA)]</div>
+    <div class="infobox blue">
+      <div class="infobox-header">📐 ตัวอย่าง: สนามบิน High & Hot</div>
+      <div class="infobox-body">
+        <p><strong>Elevation 4,000 ft · OAT = 38°C · QNH = 1013 hPa</strong></p>
+        <p>• Pressure Altitude = 4,000 ft</p>
+        <p>• ISA Temp at 4,000 ft = 15 − (2 × 4) = 7°C → ΔISA = +31°C</p>
+        <p>• Density Altitude = 4,000 + (120 × 31) = 4,000 + 3,720 = <strong>7,720 ft</strong></p>
+        <p>→ อากาศยานต้องทำงานราวกับอยู่ที่ 7,720 ft ทั้งที่สนามบินอยู่ที่ 4,000 ft จริง</p>
+      </div>
+    </div>
+
+    <h3 class="section-h2">1.5 Cold Temperature Correction (ICAO Doc 8168 — บังคับตั้งแต่ 2020)</h3>
+    <p class="prose">เมื่ออุณหภูมิต่ำกว่า ISA มาก Altimeter จะ <strong>แสดงค่าสูงกว่าความจริง</strong> เพราะอากาศหนาแน่นกว่า Standard ทำให้ความสูงจริง (True Altitude) ต่ำกว่าที่ Altimeter แสดง — อันตรายต่อ Obstacle Clearance มาก ICAO Doc 8168 Amendment กำหนดให้ทุก Operator ต้องแก้ไขค่า Altitude ที่กำหนดใน Procedure หากอุณหภูมิต่ำกว่า ISA:</p>
+    <div class="formula">Cold Temperature Correction (ft) ≈ (ISA Deviation × Height Above Airport) / 273
+
+หรือใช้ ICAO Cold Temperature Error Table (Doc 8168 Table 4-1-1)
+
+ตัวอย่าง: OAT = −30°C ที่สนามบิน Elevation 1,000 ft
+          Approach Altitude = 3,000 ft AAL (ต้องการ)
+          ISA Temp at 1,000 ft ≈ 13°C → OAT Dev = −30 − 13 = −43°C
+          Correction ≈ (43 × 3,000) / 273 ≈ 473 ft
+          → ต้องบิน Altitude 3,000 + 473 = 3,473 ft จึงจะสูงจริงเท่า 3,000 ft</div>
+
+    <div class="infobox red">
+      <div class="infobox-header">⚠️ Cold Temperature Correction — Dispatcher และ Pilot ต้องรู้</div>
+      <div class="infobox-body">
+        <p>• ICAO กำหนดให้แก้ไขเมื่อ <strong>OAT ต่ำกว่า ISA Temp ที่ Airport Elevation</strong></p>
+        <p>• Altitude ที่ต้องแก้ไข: MSA, MOCA, Procedure Turn Altitude, FAF Altitude, DA/MDA</p>
+        <p>• ใน SID/STAR บางแห่งจะระบุ "Cold Temperature Restricted" พร้อม Limiting OAT</p>
+        <p>• Dispatcher ต้องแจ้ง Crew ใน Pre-departure Briefing หาก OAT ต่ำมากที่ปลายทาง/Alternate</p>
+        <p>• บางประเทศ (เช่น แคนาดา, สแกนดิเนเวีย) กำหนด Correction Tables ใน AIP เป็นการเฉพาะ</p>
+      </div>
+    </div>
+
+    <h3 class="section-h3">Cold Temperature Error — ขนาดผลกระทบ</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>OAT (°C)</th><th>Height Above Airport 500 ft</th><th>Height 1,000 ft</th><th>Height 3,000 ft</th><th>ระดับความเสี่ยง</th></tr></thead>
+        <tbody>
+          <tr><td>0°C</td><td>+10 ft</td><td>+20 ft</td><td>+60 ft</td><td>เล็กน้อย</td></tr>
+          <tr><td>−10°C</td><td>+30 ft</td><td>+60 ft</td><td>+180 ft</td><td>ควรแก้ไข</td></tr>
+          <tr><td>−20°C</td><td>+60 ft</td><td>+120 ft</td><td>+360 ft</td><td>ต้องแก้ไข</td></tr>
+          <tr><td>−30°C</td><td>+90 ft</td><td>+190 ft</td><td>+560 ft</td><td>วิกฤต</td></tr>
+          <tr><td>−40°C</td><td>+130 ft</td><td>+260 ft</td><td>+780 ft</td><td>วิกฤต</td></tr>
+          <tr><td>−50°C</td><td>+180 ft</td><td>+360 ft</td><td>+1,080 ft</td><td>อันตรายมาก</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="prose" style="font-size:.82rem;color:var(--text3)">* ค่าประมาณจาก ICAO Doc 8168 Table — ใช้ Table จริงสำหรับ Operational Use</p>
+
+    <div class="infobox green">
+      <div class="infobox-header">✅ สรุปสูตร Altimetry ที่ Dispatcher ต้องจำ</div>
+      <div class="infobox-body">
+        <p>• <strong>Mach Number:</strong> M = TAS ÷ Speed of Sound ณ ระดับนั้น</p>
+        <p>• <strong>Speed of Sound:</strong> a = 38.94 × √T(Kelvin) [kt]</p>
+        <p>• <strong>ISA Temp:</strong> T(ft) = 15 − (1.98 × Altitude/1,000) ถึง Tropopause</p>
+        <p>• <strong>ΔISA:</strong> = OAT − ISA Temp at that Altitude</p>
+        <p>• <strong>Density Altitude:</strong> ≈ PA + (120 × ΔISA)</p>
+        <p>• <strong>Cold Temp Correction:</strong> ≈ (|ΔISA| × Height AAL) ÷ 273 [ft]</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     CHAPTER 2 — AERODYNAMICS
+════════════════════════════════════════════════════ -->
+<section class="chapter-section" id="ch2">
+  <div class="chapter-header">
+    <div class="ch-badge"><span>2</span> Aerodynamic Fundamentals</div>
+    <h2 class="ch-title">Lift · Drag · Thrust<br>และ Aerodynamics</h2>
+    <p class="ch-desc">พื้นฐาน Aerodynamics ที่ Dispatcher และ Pilot ต้องเข้าใจอย่างลึกซึ้ง — ตั้งแต่แรงสี่แรงบนอากาศยาน, Polar Curve, High-Lift Devices, Mach Effects, ไปจนถึง V-Speeds และ Load Factor ที่ใช้งานจริงในทุกเที่ยวบิน</p>
+  </div>
+  <div class="chapter-body">
+
+    <h3 class="section-h2">2.1 แรงสี่แรงบนอากาศยาน (Four Forces of Flight)</h3>
+    <p class="prose">ในการบินระดับ (Level Flight) ต้องมีความสมดุลของแรงสองคู่พร้อมกัน ภาพด้านล่างแสดงทิศทางของแรงแต่ละแรงบนอากาศยาน:</p>
+
+    <svg width="100%" viewBox="0 0 860 320" style="display:block;width:100%;max-width:860px;margin:16px 0;border-radius:10px;background:rgba(10,30,55,0.5);border:1px solid rgba(42,64,96,0.5)">
+      <!-- Aircraft silhouette (simple side view) -->
+      <!-- Fuselage -->
+      <ellipse cx="430" cy="160" rx="145" ry="28" fill="#1A3A5C" stroke="#2E75B6" stroke-width="1.2"/>
+      <!-- Nose cone -->
+      <path d="M575,160 Q620,155 640,160 Q620,165 575,160Z" fill="#2E6090" stroke="#2E75B6" stroke-width="1"/>
+      <!-- Tail -->
+      <path d="M285,160 Q265,155 250,148 Q260,160 250,172 Q265,165 285,160Z" fill="#2E6090" stroke="#2E75B6" stroke-width="1"/>
+      <!-- Wing (main) -->
+      <path d="M390,160 L360,105 L310,95 L320,108 L390,168Z" fill="#1A4A7A" stroke="#2E75B6" stroke-width="1.2"/>
+      <path d="M390,160 L420,215 L470,225 L460,212 L390,152Z" fill="#1A4A7A" stroke="#2E75B6" stroke-width="1.2"/>
+      <!-- Horizontal stabilizer -->
+      <path d="M300,158 L282,135 L260,130 L268,142 L300,162Z" fill="#1A3A5C" stroke="#2E75B6" stroke-width="1"/>
+      <path d="M300,162 L282,185 L260,190 L268,178 L300,158Z" fill="#1A3A5C" stroke="#2E75B6" stroke-width="1"/>
+      <!-- Vertical stabilizer -->
+      <path d="M290,148 L285,115 L295,100 L305,120 L300,148Z" fill="#1A3A5C" stroke="#2E75B6" stroke-width="1"/>
+      <!-- Engine (under wing) -->
+      <ellipse cx="370" cy="180" rx="22" ry="10" fill="#0D2438" stroke="#2E75B6" stroke-width="1"/>
+      <rect x="348" y="176" width="44" height="8" rx="2" fill="#0D2438" stroke="#2E75B6" stroke-width="0.8"/>
+      <ellipse cx="460" cy="142" rx="22" ry="10" fill="#0D2438" stroke="#2E75B6" stroke-width="1" transform="rotate(-8,460,142)"/>
+
+      <!-- LIFT arrow (up) -->
+      <defs>
+        <marker id="arUp" viewBox="0 0 10 10" refX="5" refY="9" markerWidth="8" markerHeight="8" orient="auto">
+          <path d="M1 9L5 1L9 9" fill="none" stroke="#4DD9C6" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+        <marker id="arDn" viewBox="0 0 10 10" refX="5" refY="1" markerWidth="8" markerHeight="8" orient="auto">
+          <path d="M1 1L5 9L9 1" fill="none" stroke="#E57565" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+        <marker id="arRt" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+          <path d="M1 1L9 5L1 9" fill="none" stroke="#FFD166" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+        <marker id="arLt" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+          <path d="M9 1L1 5L9 9" fill="none" stroke="#A8BDD4" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+      </defs>
+      <line x1="430" y1="130" x2="430" y2="52" stroke="#4DD9C6" stroke-width="2.5" marker-end="url(#arUp)"/>
+      <text x="438" y="82" fill="#4DD9C6" font-size="13" font-family="Arial" font-weight="700">LIFT</text>
+      <text x="438" y="97" fill="#4DD9C6" font-size="10" font-family="Arial">L = ½ρV²SCL</text>
+
+      <!-- WEIGHT arrow (down) -->
+      <line x1="430" y1="192" x2="430" y2="272" stroke="#E57565" stroke-width="2.5" marker-end="url(#arDn)"/>
+      <text x="438" y="248" fill="#E57565" font-size="13" font-family="Arial" font-weight="700">WEIGHT</text>
+      <text x="438" y="263" fill="#E57565" font-size="10" font-family="Arial">W = mg</text>
+
+      <!-- THRUST arrow (right/forward) -->
+      <line x1="645" y1="160" x2="740" y2="160" stroke="#FFD166" stroke-width="2.5" marker-end="url(#arRt)"/>
+      <text x="655" y="152" fill="#FFD166" font-size="13" font-family="Arial" font-weight="700">THRUST</text>
+      <text x="655" y="177" fill="#FFD166" font-size="10" font-family="Arial">T = Engine Force</text>
+
+      <!-- DRAG arrow (left/backward) -->
+      <line x1="245" y1="160" x2="150" y2="160" stroke="#A8BDD4" stroke-width="2.5" marker-end="url(#arLt)"/>
+      <text x="152" y="152" fill="#A8BDD4" font-size="13" font-family="Arial" font-weight="700">DRAG</text>
+      <text x="152" y="177" fill="#A8BDD4" font-size="10" font-family="Arial">D = ½ρV²SCD</text>
+
+      <!-- Balance labels -->
+      <text x="430" y="16" text-anchor="middle" fill="rgba(168,189,212,0.7)" font-size="11" font-family="Arial">Level Flight: Lift = Weight  ·  Thrust = Drag</text>
+    </svg>
+
+    <div class="formula">Level Flight Equilibrium:  L = W  (Lift = Weight)
+                              T = D  (Thrust = Drag)
+
+Lift:   L = ½ × ρ × V² × S × CL
+Drag:   D = ½ × ρ × V² × S × CD
+
+ρ = Air Density  ·  V = TAS  ·  S = Wing Area  ·  CL/CD = Coefficients</div>
+
+    <h3 class="section-h2">2.2 Lift — ทำไมเครื่องบินบินได้</h3>
+    <p class="prose">Lift เกิดจากความแตกต่างของความดันระหว่างด้านบนและด้านล่างของปีก โดยอ้างอิงทั้ง Bernoulli Effect (ความเร็วอากาศ) และ Newton's 3rd Law (การเบี่ยงอากาศลงด้านล่าง) สมการ Lift มีตัวแปรสำคัญ 3 ตัวที่ Dispatcher ต้องเข้าใจ:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ตัวแปร</th><th>ผลต่อ Lift</th><th>ความสำคัญสำหรับ Dispatcher</th></tr></thead>
+        <tbody>
+          <tr><td><strong>ρ (Air Density)</strong></td><td>∝ ρ — Density มากขึ้น Lift มากขึ้น</td><td>Hot/High Airport → Density ต่ำ → V-speeds ต้องสูงขึ้น</td></tr>
+          <tr><td><strong>V² (Airspeed²)</strong></td><td>∝ V² — Speed เพิ่ม 2 เท่า Lift เพิ่ม 4 เท่า</td><td>Speed ลด 50% → Lift เหลือ 25% — Stall เกิดทันที</td></tr>
+          <tr><td><strong>CL (Lift Coefficient)</strong></td><td>∝ CL — Flap/Slat ออก CL เพิ่มมาก</td><td>Landing Config → CL สูงสุด → VREF ต่ำได้</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="section-h3">Angle of Attack (AoA) & Stall</h3>
+    <p class="prose">CL เพิ่มตาม AoA จนถึง <strong>Critical AoA (Stall Angle)</strong> ประมาณ 15–20° จากนั้น Airflow Separation เกิดขึ้น CL ตกลงทันที — นั่นคือ Stall ที่เกิดจาก AoA ไม่ใช่ Speed โดยตรง:</p>
+    <div class="infobox red">
+      <div class="infobox-header">⚠️ Stall ประเภทต่างๆ ที่ต้องรู้</div>
+      <div class="infobox-body">
+        <p>• <strong>Low Speed Stall:</strong> AoA เกิน Critical → ที่ VS0/VS1 — Dispatcher ใช้กำหนด VREF</p>
+        <p>• <strong>Accelerated Stall:</strong> เกิดที่ Speed สูงกว่าปกติ เช่น ใน Steep Turn ที่ Load Factor สูง</p>
+        <p>• <strong>Power-On Stall:</strong> Thrust ทำให้ Pitch สูง AoA ถึง Critical เร็วขึ้น</p>
+        <p>• <strong>High-Speed / Mach Buffet:</strong> ที่ Altitude สูง Mach สูง — Shock Wave ทำให้ Buffet ก่อน Stall</p>
+        <p>• กฎ: ทุก Stall มี Warning (Buffet/Stick Shaker) ก่อน — Dispatcher ต้องรู้ว่า Buffet Boundary อยู่ที่ใด</p>
+      </div>
+    </div>
+
+    <h3 class="section-h2">2.3 Drag & Polar Curve</h3>
+    <p class="prose">Drag แบ่งออกเป็น 2 ส่วนหลักที่มีพฤติกรรมตรงข้ามกันตาม Speed ทำให้มี <strong>Minimum Drag Speed</strong> ที่ L/D สูงสุด:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Drag ประเภท</th><th>สาเหตุ</th><th>∝ Speed</th><th>ผลต่อ Fuel</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Parasite Drag (DP)</strong></td><td>Form Drag + Skin Friction + Interference</td><td>∝ V² (เพิ่มตาม Speed²)</td><td>Cruise เร็วเกิน → Fuel พุ่ง</td></tr>
+          <tr><td><strong>Induced Drag (DI)</strong></td><td>ผลพลอยได้จาก Lift (Wingtip Vortex)</td><td>∝ 1/V² (ลดตาม Speed)</td><td>Speed ต่ำเกิน → Fuel พุ่ง</td></tr>
+          <tr><td><strong>Wave Drag</strong></td><td>Compressibility ใกล้ Mach 1</td><td>Spike หลัง Critical Mach</td><td>ห้ามเกิน MMO เด็ดขาด</td></tr>
+          <tr><td><strong>Total Drag</strong></td><td>DP + DI (+ Wave)</td><td>ต่ำสุดที่ VMD</td><td>VMD = Best Glide Speed</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="section-h3">Drag Polar — ภาพแสดง CL vs CD</h3>
+    <p class="prose">Drag Polar คือกราฟ CL (แกน Y) vs CD (แกน X) แสดงให้เห็นว่าที่ CL ต่างๆ จะมี CD เท่าไร จุดที่สำคัญที่สุดบนกราฟคือ <strong>จุด L/D สูงสุด</strong> ซึ่งลากเส้นตรงจาก Origin ไปสัมผัส Polar Curve:</p>
+
+    <svg width="100%" viewBox="0 0 860 350" style="display:block;width:100%;max-width:860px;margin:16px 0;border-radius:10px;background:rgba(10,30,55,0.5);border:1px solid rgba(42,64,96,0.5)">
+      <!-- Axes -->
+      <line x1="80" y1="310" x2="760" y2="310" stroke="rgba(168,189,212,0.4)" stroke-width="1"/>
+      <line x1="80" y1="20" x2="80" y2="310" stroke="rgba(168,189,212,0.4)" stroke-width="1"/>
+      <!-- Axis labels -->
+      <text x="420" y="335" text-anchor="middle" fill="rgba(168,189,212,0.8)" font-size="12" font-family="Arial">CD (Drag Coefficient)</text>
+      <text x="24" y="165" text-anchor="middle" fill="rgba(168,189,212,0.8)" font-size="12" font-family="Arial" transform="rotate(-90,24,165)">CL (Lift Coefficient)</text>
+      <!-- Grid lines -->
+      <line x1="80" y1="70" x2="760" y2="70" stroke="rgba(42,64,96,0.4)" stroke-width="0.5" stroke-dasharray="4,4"/>
+      <line x1="80" y1="130" x2="760" y2="130" stroke="rgba(42,64,96,0.4)" stroke-width="0.5" stroke-dasharray="4,4"/>
+      <line x1="80" y1="190" x2="760" y2="190" stroke="rgba(42,64,96,0.4)" stroke-width="0.5" stroke-dasharray="4,4"/>
+      <line x1="80" y1="250" x2="760" y2="250" stroke="rgba(42,64,96,0.4)" stroke-width="0.5" stroke-dasharray="4,4"/>
+      <line x1="200" y1="20" x2="200" y2="310" stroke="rgba(42,64,96,0.4)" stroke-width="0.5" stroke-dasharray="4,4"/>
+      <line x1="320" y1="20" x2="320" y2="310" stroke="rgba(42,64,96,0.4)" stroke-width="0.5" stroke-dasharray="4,4"/>
+      <line x1="440" y1="20" x2="440" y2="310" stroke="rgba(42,64,96,0.4)" stroke-width="0.5" stroke-dasharray="4,4"/>
+      <line x1="560" y1="20" x2="560" y2="310" stroke="rgba(42,64,96,0.4)" stroke-width="0.5" stroke-dasharray="4,4"/>
+      <!-- Axis tick labels -->
+      <text x="80" y="324" text-anchor="middle" fill="rgba(168,189,212,0.6)" font-size="10" font-family="Arial">0</text>
+      <text x="200" y="324" text-anchor="middle" fill="rgba(168,189,212,0.6)" font-size="10" font-family="Arial">0.01</text>
+      <text x="320" y="324" text-anchor="middle" fill="rgba(168,189,212,0.6)" font-size="10" font-family="Arial">0.02</text>
+      <text x="440" y="324" text-anchor="middle" fill="rgba(168,189,212,0.6)" font-size="10" font-family="Arial">0.03</text>
+      <text x="560" y="324" text-anchor="middle" fill="rgba(168,189,212,0.6)" font-size="10" font-family="Arial">0.04</text>
+      <text x="68" y="314" text-anchor="end" fill="rgba(168,189,212,0.6)" font-size="10" font-family="Arial">0</text>
+      <text x="68" y="254" text-anchor="end" fill="rgba(168,189,212,0.6)" font-size="10" font-family="Arial">0.3</text>
+      <text x="68" y="194" text-anchor="end" fill="rgba(168,189,212,0.6)" font-size="10" font-family="Arial">0.6</text>
+      <text x="68" y="134" text-anchor="end" fill="rgba(168,189,212,0.6)" font-size="10" font-family="Arial">0.9</text>
+      <text x="68" y="74" text-anchor="end" fill="rgba(168,189,212,0.6)" font-size="10" font-family="Arial">1.2</text>
+      <!-- Drag Polar curve (parabola-like) CL vs CD -->
+      <!-- CD = CD0 + CL²/(pi*AR*e), scaled to SVG coords -->
+      <!-- Origin at (80,310), x scale: 1 unit CD=0.01 → 120px, y scale: CL 0.1 → -20px -->
+      <path d="M 104,310
+               L 108,290
+               L 114,270
+               L 123,250
+               L 135,230
+               L 152,210
+               L 173,190
+               L 200,170
+               L 232,150
+               L 270,130
+               L 315,110
+               L 366,90
+               L 424,70
+               L 490,50
+               L 565,32"
+            fill="none" stroke="#2196C4" stroke-width="2.5" stroke-linecap="round"/>
+
+      <!-- L/D max tangent line from origin -->
+      <line x1="80" y1="310" x2="520" y2="36" stroke="#C8961E" stroke-width="1.5" stroke-dasharray="6,3"/>
+
+      <!-- Best L/D point (tangent touches curve) approximately -->
+      <circle cx="305" cy="136" r="7" fill="none" stroke="#C8961E" stroke-width="2"/>
+      <circle cx="305" cy="136" r="3" fill="#C8961E"/>
+
+      <!-- Stall region indicator -->
+      <rect x="440" y="20" width="300" height="280" fill="rgba(192,57,43,0.06)" rx="4"/>
+      <text x="590" y="42" text-anchor="middle" fill="rgba(229,117,101,0.7)" font-size="11" font-family="Arial">Stall Region</text>
+      <text x="590" y="56" text-anchor="middle" fill="rgba(229,117,101,0.5)" font-size="10" font-family="Arial">(AoA > Critical)</text>
+
+      <!-- Labels -->
+      <text x="530" y="38" fill="#A8BDD4" font-size="11" font-family="Arial">L/D Max Tangent</text>
+      <text x="318" y="128" fill="#E5AF35" font-size="11" font-family="Arial" font-weight="700">Best L/D</text>
+      <text x="318" y="141" fill="#E5AF35" font-size="10" font-family="Arial">(Min. Drag Speed)</text>
+
+      <!-- Regions annotated -->
+      <text x="130" y="295" fill="rgba(168,189,212,0.6)" font-size="10" font-family="Arial">Low Speed</text>
+      <text x="130" y="307" fill="rgba(168,189,212,0.5)" font-size="9" font-family="Arial">(Induced Drag dominant)</text>
+      <text x="600" y="295" fill="rgba(168,189,212,0.6)" font-size="10" font-family="Arial">High Speed</text>
+      <text x="600" y="307" fill="rgba(168,189,212,0.5)" font-size="9" font-family="Arial">(Parasite Drag dominant)</text>
+
+      <text x="430" y="15" text-anchor="middle" fill="rgba(168,189,212,0.5)" font-size="11" font-family="Arial">Drag Polar Curve (CL vs CD) — Modern Jet Transport</text>
+    </svg>
+
+    <div class="callout">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body">
+        <div class="callout-title">L/D Ratio — ตัวชี้วัดประสิทธิภาพที่ Dispatcher ต้องรู้</div>
+        <div class="callout-text">จุด L/D สูงสุดบน Drag Polar คือ <strong>Best Glide Speed</strong> (VMD) ซึ่งใช้ขณะ Engine Failure เพื่อ Glide ได้ไกลสุด และคือ Speed ที่ Fuel Burn ต่ำที่สุดในเชิง Aerodynamic Modern Jet: L/D ≈ 17–20 ที่ Cruise Config — เช่น FL350 (35,000 ft) × 18 = 630,000 ft ≈ <strong>103 NM Glide Range</strong></div>
+      </div>
+    </div>
+
+    <h3 class="section-h2">2.4 High-Lift Devices — Flap & Slat</h3>
+    <p class="prose">Flap และ Slat เปลี่ยนรูปร่างของปีกเพื่อเพิ่ม CL สูงสุด ทำให้บินช้าได้อย่างปลอดภัยขณะ Takeoff และ Landing:</p>
+
+    <svg width="100%" viewBox="0 0 860 200" style="display:block;width:100%;max-width:860px;margin:16px 0;border-radius:10px;background:rgba(10,30,55,0.5);border:1px solid rgba(42,64,96,0.5)">
+      <text x="430" y="18" text-anchor="middle" fill="rgba(168,189,212,0.6)" font-size="11" font-family="Arial">Wing Cross-Section — Clean vs High-Lift Config</text>
+
+      <!-- CLEAN WING (left panel) -->
+      <text x="215" y="38" text-anchor="middle" fill="rgba(168,189,212,0.8)" font-size="12" font-family="Arial" font-weight="700">Clean Config (Cruise)</text>
+      <path d="M 80,130 Q 200,60 340,120 L 340,138 Q 200,92 80,148 Z"
+            fill="#1A3A5C" stroke="#2E75B6" stroke-width="1.5"/>
+      <!-- Airflow arrows clean -->
+      <path d="M60,80 Q120,65 170,75" fill="none" stroke="rgba(33,150,196,0.5)" stroke-width="1" stroke-dasharray="3,3"/>
+      <path d="M60,90 Q110,82 155,88" fill="none" stroke="rgba(33,150,196,0.5)" stroke-width="1" stroke-dasharray="3,3"/>
+      <path d="M60,100 Q100,100 140,102" fill="none" stroke="rgba(33,150,196,0.5)" stroke-width="1" stroke-dasharray="3,3"/>
+      <path d="M60,145 Q120,150 170,148" fill="none" stroke="rgba(33,150,196,0.4)" stroke-width="1" stroke-dasharray="3,3"/>
+      <text x="215" y="170" text-anchor="middle" fill="#4DD9C6" font-size="11" font-family="Arial">CL max ≈ 1.4</text>
+      <text x="215" y="183" text-anchor="middle" fill="rgba(168,189,212,0.6)" font-size="10" font-family="Arial">VS ≈ 140 kt</text>
+
+      <!-- Divider -->
+      <line x1="430" y1="30" x2="430" y2="195" stroke="rgba(42,64,96,0.6)" stroke-width="1" stroke-dasharray="4,4"/>
+
+      <!-- HIGH-LIFT WING (right panel) - Flap + Slat extended -->
+      <text x="645" y="38" text-anchor="middle" fill="rgba(168,189,212,0.8)" font-size="12" font-family="Arial" font-weight="700">Landing Config (Flap 40 + Slat)</text>
+      <!-- Slat (leading edge) -->
+      <path d="M 460,125 Q 480,95 510,105 Q 490,115 460,140 Z"
+            fill="#1E4A7A" stroke="#2196C4" stroke-width="1.2"/>
+      <!-- Main wing element -->
+      <path d="M 505,118 Q 620,68 730,115 L 730,132 Q 620,95 505,136 Z"
+            fill="#1A3A5C" stroke="#2E75B6" stroke-width="1.5"/>
+      <!-- Flap (trailing edge, drooped down) -->
+      <path d="M 730,122 Q 760,128 790,148 L 790,162 Q 760,145 730,138 Z"
+            fill="#1E4A7A" stroke="#2196C4" stroke-width="1.2"/>
+      <!-- Labels -->
+      <text x="477" y="92" fill="#7BC8E8" font-size="10" font-family="Arial">Slat</text>
+      <text x="770" y="126" fill="#7BC8E8" font-size="10" font-family="Arial">Flap</text>
+      <!-- Airflow arrows high-lift (more curved) -->
+      <path d="M440,90 Q490,68 540,78" fill="none" stroke="rgba(77,217,198,0.5)" stroke-width="1" stroke-dasharray="3,3"/>
+      <path d="M440,103 Q480,90 525,96" fill="none" stroke="rgba(77,217,198,0.5)" stroke-width="1" stroke-dasharray="3,3"/>
+      <path d="M440,148 Q490,152 545,148" fill="none" stroke="rgba(77,217,198,0.4)" stroke-width="1" stroke-dasharray="3,3"/>
+      <text x="645" y="170" text-anchor="middle" fill="#4DD9C6" font-size="11" font-family="Arial" font-weight="700">CL max ≈ 2.8–3.2</text>
+      <text x="645" y="183" text-anchor="middle" fill="rgba(168,189,212,0.6)" font-size="10" font-family="Arial">VS ≈ 95 kt (ปลอดภัยบินช้า)</text>
+    </svg>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Config</th><th>CL max (โดยประมาณ)</th><th>Drag เพิ่ม</th><th>การใช้งาน</th></tr></thead>
+        <tbody>
+          <tr><td>Clean (Cruise)</td><td>~1.4</td><td>Baseline</td><td>Cruise ที่ High Altitude</td></tr>
+          <tr><td>Flap 5° (Takeoff)</td><td>~1.8</td><td>+เล็กน้อย</td><td>T/O ระยะสั้น — Drag น้อย</td></tr>
+          <tr><td>Flap 15° (Takeoff)</td><td>~2.2</td><td>+ปานกลาง</td><td>T/O มาตรฐาน</td></tr>
+          <tr><td>Flap 30° (Landing)</td><td>~2.7</td><td>+มาก</td><td>Landing ทั่วไป</td></tr>
+          <tr><td>Flap 40° + Slat (Landing)</td><td>~3.0–3.2</td><td>+มากที่สุด</td><td>Landing — Drag ช่วยหยุด</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="infobox blue">
+      <div class="infobox-header">💡 Ground Effect — Runway ช่วยเพิ่ม Lift</div>
+      <div class="infobox-body">
+        <p>เมื่ออากาศยานบินต่ำกว่าประมาณ 1 Wingspan จากพื้น ปรากฏการณ์ <strong>Ground Effect</strong> ทำให้ Induced Drag ลดลง 10–50% เพราะ Wingtip Vortex ถูกจำกัดโดยพื้น ผลคือ:</p>
+        <p>• อากาศยาน "ลอย" ยาวขึ้นหลัง Rotation → ต้องระวัง Obstacle หลัง Liftoff</p>
+        <p>• ขณะ Landing → Flare ยาวขึ้น, Touchdown Point อาจเลยเป้าหมาย</p>
+        <p>• ที่ Heavy Weight + Hot Day: อาจ Rotate แล้ว "ติด" ใน Ground Effect ออกไม่ได้ → Dispatcher ต้องตรวจ 2nd Segment Gradient</p>
+      </div>
+    </div>
+
+    <h3 class="section-h2">2.5 Mach Effects & Critical Mach (Mcrit)</h3>
+    <p class="prose">ขณะ Cruise ที่ Mach สูง อากาศไหลเร็วกว่า Mach 1 บนส่วนบนของปีกแม้ TAS จะต่ำกว่า Mach 1 ก็ตาม ปรากฏการณ์นี้เรียกว่า <strong>Local Supersonic Flow</strong>:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Mach ระดับ</th><th>ชื่อเรียก</th><th>ปรากฏการณ์</th><th>ผลต่อ Aircraft</th></tr></thead>
+        <tbody>
+          <tr><td>M &lt; Mcrit</td><td>Subsonic</td><td>Flow ทั้งหมด Subsonic</td><td>Normal — ไม่มีปัญหา</td></tr>
+          <tr><td>M = Mcrit</td><td>Critical Mach</td><td>Flow บนปีกเริ่มถึง Mach 1</td><td>เริ่มมี Wave Drag</td></tr>
+          <tr><td>Mcrit &lt; M &lt; MMO</td><td>Transonic</td><td>Mixed Sub/Supersonic Flow + Shock Wave</td><td>Buffet, Mach Tuck, Control Issues</td></tr>
+          <tr><td>M ≥ MMO</td><td>Overspeed</td><td>Severe Shock Wave</td><td>ห้ามเกิน! Structural Risk</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="infobox red">
+      <div class="infobox-header">⚠️ Mach Buffet & High-Speed Buffet Boundary</div>
+      <div class="infobox-body">
+        <p>ที่ High Altitude อากาศยาน Jet Transport ต้องบินใน <strong>Coffin Corner</strong> — ช่วง Speed แคบมากระหว่าง Low Speed Buffet (Stall) และ High Speed Buffet (Mach):</p>
+        <p>• Low Speed Buffet จาก Weight มาก + Altitude สูง → VS เพิ่มขึ้น</p>
+        <p>• High Speed Buffet จาก Mach Mcrit ถูก Exceed → Shock Wave Buffet</p>
+        <p>• ที่ Maximum Altitude ทั้งสองขีดจำกัดมาบรรจบกัน — Dispatcher ต้องตรวจ Maximum Cruise Altitude ว่าน้ำหนักที่ Cruise ไม่เกิน Buffet Onset</p>
+      </div>
+    </div>
+
+    <h3 class="section-h2">2.6 V-Speeds ที่ Dispatcher ต้องรู้</h3>
+    <p class="prose">V-Speeds คือความเร็วมาตรฐานที่กำหนดใน AFM แต่ละรายการมีนิยามและผลทางกฎหมายที่ชัดเจน Dispatcher ต้องอ้างอิงค่าเหล่านี้ใน Dispatch Release เสมอ:</p>
+    <div class="vspeed-grid">
+      <div class="vspeed-card"><div class="vspeed-name">V1</div><div class="vspeed-full">Takeoff Decision Speed</div><div class="vspeed-desc">ความเร็วตัดสินใจ: ก่อน V1 หยุดได้ · หลัง V1 บินต่อเท่านั้น</div></div>
+      <div class="vspeed-card"><div class="vspeed-name">VR</div><div class="vspeed-full">Rotation Speed</div><div class="vspeed-desc">นักบินเริ่ม Pull Back — หัวเครื่องบินยกขึ้น</div></div>
+      <div class="vspeed-card"><div class="vspeed-name">V2</div><div class="vspeed-full">Takeoff Safety Speed</div><div class="vspeed-desc">Min. safe speed ด้วย 1 Engine ที่ Screen Height 35 ft</div></div>
+      <div class="vspeed-card"><div class="vspeed-name">VFTO</div><div class="vspeed-full">Final Takeoff Speed</div><div class="vspeed-desc">Speed ที่ End of Takeoff Path / Acceleration Altitude</div></div>
+      <div class="vspeed-card"><div class="vspeed-name">VEF</div><div class="vspeed-full">Engine Failure Speed</div><div class="vspeed-desc">ความเร็วสมมติที่ Engine ขัดข้อง (ก่อน V1)</div></div>
+      <div class="vspeed-card"><div class="vspeed-name">VMC</div><div class="vspeed-full">Min. Control Speed (Air)</div><div class="vspeed-desc">ต่ำสุดที่ควบคุมทิศทางได้ใน Air ด้วย 1 Engine</div></div>
+      <div class="vspeed-card"><div class="vspeed-name">VMCg</div><div class="vspeed-full">Min. Control Speed (Ground)</div><div class="vspeed-desc">ต่ำสุดที่รักษาเส้นทางบน Runway ได้ด้วย 1 Engine</div></div>
+      <div class="vspeed-card"><div class="vspeed-name">VS0</div><div class="vspeed-full">Stall Speed (Landing Config)</div><div class="vspeed-desc">ฐานคำนวณ VREF = 1.3 × VS0</div></div>
+      <div class="vspeed-card"><div class="vspeed-name">VS1</div><div class="vspeed-full">Stall Speed (Specified Config)</div><div class="vspeed-desc">ฐานคำนวณ V-Speeds อื่นๆ ในแต่ละ Configuration</div></div>
+      <div class="vspeed-card"><div class="vspeed-name">VLE</div><div class="vspeed-full">Max Gear Extended Speed</div><div class="vspeed-desc">ห้ามเกินขณะ Landing Gear ยังอยู่ในตำแหน่ง Down</div></div>
+      <div class="vspeed-card"><div class="vspeed-name">VFE</div><div class="vspeed-full">Max Flap Extended Speed</div><div class="vspeed-desc">ต่างกันแต่ละตำแหน่ง Flap — ดู AFM</div></div>
+      <div class="vspeed-card"><div class="vspeed-name">VMO/MMO</div><div class="vspeed-full">Max Operating Speed/Mach</div><div class="vspeed-desc">Redline ของ Jet Transport ห้ามเกินในทุกกรณี</div></div>
+      <div class="vspeed-card"><div class="vspeed-name">VREF</div><div class="vspeed-full">Reference Landing Speed</div><div class="vspeed-desc">Target Speed บน Final Approach ≈ 1.3 × VS0</div></div>
+      <div class="vspeed-card"><div class="vspeed-name">VA</div><div class="vspeed-full">Design Maneuvering Speed</div><div class="vspeed-desc">สูงสุดที่ใช้ Full Control Input ได้อย่างปลอดภัย</div></div>
+    </div>
+
+    <h3 class="section-h2">2.7 Load Factor & Bank Angle</h3>
+    <p class="prose">Load Factor (n) คืออัตราส่วนของ Lift ต่อน้ำหนักอากาศยาน มีผลโดยตรงต่อ Stall Speed ใน Turn — ยิ่ง Bank ลึก n ยิ่งสูง Stall Speed ยิ่งเพิ่มขึ้นมาก:</p>
+    <div class="formula">n = L / W = 1 / cos(θ)    [θ = Bank Angle]
+
+Stall Speed in Turn = VS × √n
+
+ตัวอย่าง: Bank 60° → n = 1/cos(60°) = 2.0 g → VS_turn = VS × √2.0 = VS × 1.41
+          ถ้า VS = 130 kt → Stall ใน 60° Bank = 130 × 1.41 = 183 kt!</div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Bank Angle</th><th>Load Factor</th><th>Stall Speed เพิ่ม</th><th>หมายเหตุ</th></tr></thead>
+        <tbody>
+          <tr><td>0°</td><td>1.00 g</td><td>0%</td><td>Level Flight ปกติ</td></tr>
+          <tr><td>30°</td><td>1.15 g</td><td>+8%</td><td>Mild Turn</td></tr>
+          <tr><td>45°</td><td>1.41 g</td><td>+19%</td><td>Standard Rate Turn</td></tr>
+          <tr><td>60°</td><td>2.00 g</td><td>+41%</td><td>Steep Turn — Dispatcher ระวัง VREF ใน Circling</td></tr>
+          <tr><td>75°</td><td>3.86 g</td><td>+97%</td><td>Extreme — ห้ามทำในการบินพาณิชย์</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="infobox gold">
+      <div class="infobox-header">📌 Dispatcher ต้องรู้: VREF Additive สำหรับ Circling Approach</div>
+      <div class="infobox-body">
+        <p>ขณะ Circling Approach (บินวนรอบสนามบิน) นักบินต้องบิน Turn ที่ Bank ≈ 25–30° ที่ Low Altitude ทำให้ Stall Speed เพิ่มขึ้น ~8%</p>
+        <p>• Dispatcher ต้องตรวจว่า Landing Weight ไม่เกิน Maximum Circling Weight ที่ระบุใน AFM</p>
+        <p>• บางสนามบิน Circling ถูก Restricted หรือ Prohibited โดย AIP — Dispatcher ต้องแจ้ง Crew ใน Release</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<section class="chapter-section" id="ch3">
+  <div class="chapter-header">
+    <div class="ch-badge"><span>3</span> Weight & Balance</div>
+    <h2 class="ch-title">น้ำหนักอากาศยาน<br>&amp; จุดศูนย์ถ่วง</h2>
+    <p class="ch-desc">Weight & Balance เป็นหน้าที่หลักของ Flight Dispatcher ก่อนทุกเที่ยวบิน ต้องตรวจให้แน่ใจว่าน้ำหนักอยู่ในขีดจำกัดทุกรายการ และ CG อยู่ใน Approved Envelope ตลอดการบิน</p>
+  </div>
+  <div class="chapter-body">
+
+    <h3 class="section-h2">3.1 Weight Definitions & Hierarchy</h3>
+    <p class="prose">น้ำหนักอากาศยานมีลำดับชั้นที่ชัดเจน Dispatcher ต้องตรวจทุกรายการก่อน Sign Dispatch Release:</p>
+
+    <div class="weight-ladder">
+      <div class="wl-row"><div class="wl-abbr">MEW</div><div class="wl-content"><div class="wl-name">Manufacturer's Empty Weight</div><div class="wl-desc">น้ำหนักโครงสร้างจากโรงงาน ไม่รวม Operator Items ใดๆ</div></div></div>
+      <div class="wl-row"><div class="wl-abbr">OEW</div><div class="wl-content"><div class="wl-name">Operating Empty Weight</div><div class="wl-desc">MEW + Crew + Catering + Unusable Fuel + Operator Equipment</div></div></div>
+      <div class="wl-row"><div class="wl-abbr">ZFW</div><div class="wl-content"><div class="wl-name">Zero Fuel Weight</div><div class="wl-desc">OEW + Traffic Load (ผู้โดยสาร + สัมภาระ + Cargo)</div><div class="wl-limit">≤ MZFW (Maximum Zero Fuel Weight)</div></div></div>
+      <div class="wl-row"><div class="wl-abbr">TOW</div><div class="wl-content"><div class="wl-name">Takeoff Weight</div><div class="wl-desc">ZFW + Takeoff Fuel (Usable Fuel ไม่รวม Taxi)</div><div class="wl-limit">≤ MTOW และ ≤ Performance-Limited TOW</div></div></div>
+      <div class="wl-row"><div class="wl-abbr">LW</div><div class="wl-content"><div class="wl-name">Landing Weight</div><div class="wl-desc">TOW − Trip Fuel (Fuel ใช้ระหว่างบินจนถึง Landing)</div><div class="wl-limit">≤ MLW และ ≤ Performance-Limited LW</div></div></div>
+      <div class="wl-row"><div class="wl-abbr">MRW</div><div class="wl-content"><div class="wl-name">Maximum Ramp Weight</div><div class="wl-desc">MTOW + Taxi Fuel — น้ำหนักสูงสุดที่ใช้งานได้บน Ground</div></div></div>
+    </div>
+
+    <div class="infobox red">
+      <div class="infobox-header">⚠️ Weight Check Hierarchy ที่ Dispatcher ต้องตรวจทุกครั้ง</div>
+      <div class="infobox-body">
+        <p>• <code>Actual ZFW ≤ MZFW</code></p>
+        <p>• <code>Actual TOW ≤ min(MTOW, Field Limit, Obstacle Limit, Climb Limit)</code></p>
+        <p>• <code>Actual LW ≤ min(MLW, Landing Performance Limit)</code></p>
+        <p>• หาก Landing Weight เกิน MLW → ต้องลด Fuel หรือลด Payload ก่อน Dispatch</p>
+      </div>
+    </div>
+
+    <h3 class="section-h2">3.2 Center of Gravity (CG)</h3>
+    <p class="prose">CG ต้องอยู่ใน Approved Envelope ตลอดการบิน ทั้ง Takeoff และ Landing โดยคิดผลของ Fuel Burn ที่จะทำให้ CG เลื่อนด้วย:</p>
+    <div class="formula">CG (%MAC) = (Total Moment / Total Weight) expressed as % of Mean Aerodynamic Chord</div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>CG Position</th><th>ผลต่อ Stability</th><th>ผลต่อ V-speeds</th><th>ผลต่อ Fuel</th></tr></thead>
+        <tbody>
+          <tr><td>Forward CG</td><td>Stable มาก ควบคุมง่าย</td><td>Stall Speed ↑ · V1/VR/V2 สูงขึ้น</td><td>Trim Drag เพิ่ม → Fuel ↑</td></tr>
+          <tr><td>Aft CG</td><td>Stability ลดลง</td><td>Stall Speed ↓ · V-speeds ต่ำลง</td><td>Trim Drag ลด → Fuel ↓ เล็กน้อย</td></tr>
+          <tr><td>นอก Forward Limit</td><td>Stall Recovery ยากมาก</td><td>V-speeds สูงมาก</td><td>Drag สูงมาก</td></tr>
+          <tr><td>นอก Aft Limit</td><td>อันตราย! อาจควบคุมไม่ได้</td><td>–</td><td>–</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="infobox blue">
+      <div class="infobox-header">📋 CG Calculation Process</div>
+      <div class="infobox-body">
+        <p><strong>1.</strong> รับ Load Sheet / Weight & Balance Report จาก Load Control</p>
+        <p><strong>2.</strong> ตรวจ OEW CG จาก Aircraft Document (Weight &amp; Balance Manual)</p>
+        <p><strong>3.</strong> คำนวณ Total Moment = Σ(Item Weight × Arm from Datum)</p>
+        <p><strong>4.</strong> คำนวณ CG = Total Moment / Total Weight</p>
+        <p><strong>5.</strong> แปลงเป็น %MAC โดยใช้ LEMAC และ MAC ของ Aircraft Type นั้นๆ</p>
+        <p><strong>6.</strong> ตรวจว่า CG อยู่ใน Approved Envelope — ทั้ง Takeoff CG และ Landing CG</p>
+      </div>
+    </div>
+
+    <h3 class="section-h2">3.3 Payload & Fuel Calculation</h3>
+    <div class="formula">Max Allowable Payload = min(MZFW − OEW, MTOW − OEW − Min Required Fuel)</div>
+
+    <p class="prose">หากน้ำหนัก Traffic Load สูงมาก อาจถูกจำกัดด้วย MZFW (Structural Bending Moment ที่ Wing Root) แทนที่จะเป็น MTOW — Dispatcher ต้องตรวจทั้งสองเงื่อนไขเสมอ</p>
+
+    <div class="infobox blue">
+      <div class="infobox-header">📐 ตัวอย่างคำนวณ Max Payload — B737-800 เที่ยว BKK–SIN</div>
+      <div class="infobox-body">
+        <p><strong>ข้อมูล Aircraft:</strong> OEW = 42,100 kg · MZFW = 61,689 kg · MTOW = 79,016 kg</p>
+        <p><strong>ข้อมูล Fuel:</strong> Trip Fuel = 8,400 kg · Reserve = 2,800 kg · Taxi = 350 kg · Min Required Fuel = 11,200 kg</p>
+        <p><strong>คำนวณ 2 เงื่อนไข:</strong></p>
+        <p>• Structural Limit: MZFW − OEW = 61,689 − 42,100 = <strong>19,589 kg</strong></p>
+        <p>• MTOW Limit: MTOW − OEW − Min Fuel = 79,016 − 42,100 − 11,200 = <strong>25,716 kg</strong></p>
+        <p>→ Max Allowable Payload = min(19,589, 25,716) = <strong>19,589 kg</strong> (ถูกจำกัดโดย MZFW)</p>
+        <p>→ 168 pax × 95 kg (ICAO Std) = 15,960 kg + 15 kg/pax baggage ≈ 18,480 kg → <strong>ผ่าน</strong></p>
+      </div>
+    </div>
+
+    <div class="infobox gold">
+      <div class="infobox-header">📌 ICAO Standard Passenger Weights (Doc 9760)</div>
+      <div class="infobox-body">
+        <p>• <strong>ผู้ใหญ่ (รวมกระเป๋าถือ):</strong> Summer = 88 kg · Winter = 90 kg</p>
+        <p>• <strong>เด็ก (อายุ 2–12 ปี):</strong> 35 kg</p>
+        <p>• <strong>ทารก (&lt;2 ปี):</strong> 10 kg (ไม่นับที่นั่ง)</p>
+        <p>• <strong>Checked Baggage เฉลี่ย:</strong> Short-haul ~11 kg · Long-haul ~15 kg</p>
+        <p>• สายการบินสามารถใช้ค่าของตัวเองหาก Surveyed Weight ต่างจาก ICAO Standard</p>
+      </div>
+    </div>
+
+    <h3 class="section-h3">Fuel Components Summary</h3>
+    <div class="fuel-stack">
+      <div class="fuel-row"><div class="fuel-abbr">Taxi Fuel</div><div class="fuel-label">ใช้ก่อน Takeoff — ไม่นับใน TOW</div><div class="fuel-req" style="background:rgba(33,150,196,0.1);color:var(--sky)">Actual</div></div>
+      <div class="fuel-row"><div class="fuel-abbr">Trip Fuel</div><div class="fuel-label">จาก Takeoff ถึง Landing ปลายทาง</div><div class="fuel-req" style="background:rgba(33,150,196,0.15);color:var(--sky)">Required</div></div>
+      <div class="fuel-row"><div class="fuel-abbr">Contingency</div><div class="fuel-label">≥ 5% Trip หรือ 5 นาที (ICAO) / 10% (FAR)</div><div class="fuel-req" style="background:rgba(33,150,196,0.15);color:var(--sky)">Required</div></div>
+      <div class="fuel-row"><div class="fuel-abbr">Alternate</div><div class="fuel-label">Dest → Alternate (ถ้าต้องกำหนด Alternate)</div><div class="fuel-req" style="background:rgba(33,150,196,0.15);color:var(--sky)">Conditional</div></div>
+      <div class="fuel-row"><div class="fuel-abbr">Final Resv</div><div class="fuel-label">30 นาที Jet / 45 นาที Piston — Emergency เท่านั้น</div><div class="fuel-req" style="background:rgba(192,57,43,0.15);color:#E57565">ห้ามแตะ!</div></div>
+      <div class="fuel-row"><div class="fuel-abbr">Additional</div><div class="fuel-label">Dispatcher เห็นสมควร (Weather, Routing, Delay)</div><div class="fuel-req" style="background:rgba(200,150,30,0.1);color:var(--gold2)">Discretion</div></div>
+      <div class="fuel-row"><div class="fuel-abbr">Extra</div><div class="fuel-label">กัปตันร้องขอเพิ่มเติม</div><div class="fuel-req" style="background:rgba(200,150,30,0.1);color:var(--gold2)">Optional</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     CHAPTER 4 — TAKEOFF PERFORMANCE
+════════════════════════════════════════════════════ -->
+<section class="chapter-section" id="ch4">
+  <div class="chapter-header">
+    <div class="ch-badge"><span>4</span> Takeoff Performance</div>
+    <h2 class="ch-title">Takeoff Distances,<br>V-Speeds &amp; Limiting Weights</h2>
+    <p class="ch-desc">Takeoff คือช่วงที่ Dispatcher มีหน้าที่หนักที่สุด ต้องคำนวณว่าอากาศยานสามารถบินขึ้นจาก Runway ที่กำหนดได้หรือไม่ ภายใต้สภาพอากาศและน้ำหนักที่แท้จริง</p>
+  </div>
+  <div class="chapter-body">
+
+    <h3 class="section-h2">4.1 Runway Declarations</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>คำย่อ</th><th>ชื่อเต็ม</th><th>คำอธิบาย</th></tr></thead>
+        <tbody>
+          <tr><td>TORA</td><td>Takeoff Run Available</td><td>ความยาว Runway ที่ใช้ Takeoff ได้</td></tr>
+          <tr><td>TODA</td><td>Takeoff Distance Available</td><td>TORA + Clearway (พื้นที่ว่างหลัง Runway)</td></tr>
+          <tr><td>ASDA</td><td>Accelerate-Stop Distance Available</td><td>TORA + Stopway (พื้นที่หยุดฉุกเฉิน)</td></tr>
+          <tr><td>LDA</td><td>Landing Distance Available</td><td>Runway ที่ใช้ Landing ได้ (อาจน้อยกว่า TORA)</td></tr>
+          <tr><td>TODR</td><td>Takeoff Distance Required</td><td>ระยะจาก Brake Release ถึง 35 ft Screen Height</td></tr>
+          <tr><td>ASDR</td><td>Accelerate-Stop Distance Required</td><td>ระยะที่ต้องการหยุดได้หลัง Engine Fail ที่ V1</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="section-h3">V1 Selection — Balanced Field Length</h3>
+    <p class="prose">V1 ถูกเลือกให้ TODR ≤ TODA และ ASDR ≤ ASDA พร้อมกัน จุดที่ทั้งสองเท่ากันเรียกว่า <strong>Balanced Field Length</strong> ซึ่งให้ MTOW สูงสุดสำหรับ Runway ที่กำหนด:</p>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-title">🔴 V1 สูงขึ้น</div>
+        <div class="card-body">ASDR ยาวขึ้น (หยุดยากขึ้น)<br>TODR สั้นลง (ขึ้นได้เร็ว)<br>→ เหมาะ Runway ยาว</div>
+      </div>
+      <div class="card">
+        <div class="card-title">🟢 V1 ต่ำลง</div>
+        <div class="card-body">ASDR สั้นลง (หยุดง่าย)<br>TODR ยาวขึ้น (ต้องใช้ Runway มากขึ้น)<br>→ เหมาะ Runway สั้น</div>
+      </div>
+    </div>
+
+    <h3 class="section-h2">4.2 Limiting Weights สำหรับ Takeoff</h3>
+    <p class="prose">Allowable TOW คือค่าต่ำสุดของทุก Limit ด้านล่าง — ต้องไม่เกินแม้แต่ค่าเดียว:</p>
+    <div class="formula">Allowable TOW = min(MSTOW, FLTOW, OCTOW, CLTOW, TSTOW, BETOW)</div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Limiting Factor</th><th>ย่อ</th><th>ปัจจัยที่กำหนด</th></tr></thead>
+        <tbody>
+          <tr><td>Structural Limit</td><td>MSTOW</td><td>Design Certification — ค่าคงที่ ไม่เปลี่ยนตามสภาวะ</td></tr>
+          <tr><td>Field Length Limit</td><td>FLTOW</td><td>Runway Length, Slope, Obstacles Near Airport, Wind</td></tr>
+          <tr><td>Obstacle Clearance Limit</td><td>OCTOW</td><td>Net Takeoff Flight Path vs. Terrain/Obstacles ในพื้นที่</td></tr>
+          <tr><td>Climb Gradient Limit</td><td>CLTOW</td><td>Engine Out Climb Gradient Requirements (2nd Segment)</td></tr>
+          <tr><td>Tire Speed Limit</td><td>TSTOW</td><td>Max Speed ที่ Tire ทนได้ — VR ต้องไม่เกิน Max Tire Speed</td></tr>
+          <tr><td>Brake Energy Limit</td><td>BETOW</td><td>พลังงานที่ Brakes ดูดซับได้ใน Rejected Takeoff</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="section-h3">Climb Gradient Requirements (FAR 25 / CS-25)</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Segment</th><th>Configuration</th><th>Min. Gradient</th><th>ระยะ</th></tr></thead>
+        <tbody>
+          <tr><td>1st Segment</td><td>Gear Down, Flaps T/O</td><td>≥ 0% (ห้าม Descend)</td><td>Liftoff → Gear Retraction</td></tr>
+          <tr><td>2nd Segment</td><td>Gear Up, Flaps T/O</td><td>≥ 2.4% (4-eng: 3.0%)</td><td>Gear Up → 400 ft AAL</td></tr>
+          <tr><td>Acceleration Segment</td><td>Gear Up, Flaps Retracting</td><td>≥ 0% Net</td><td>400 ft → Flap Retraction Altitude</td></tr>
+          <tr><td>Final Segment</td><td>Gear Up, Flaps Up</td><td>≥ 1.2% (4-eng: 1.7%)</td><td>สิ้นสุดที่ 1,500 ft AAL</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body">
+        <div class="callout-title">2nd Segment คือ Critical Segment ที่สุด</div>
+        <div class="callout-text">2nd Segment Gradient เป็น Limiting Factor บ่อยที่สุดในการบินจากสนามบินร้อนหรือสูง เพราะ Gear ยังกำลัง Retracting อยู่ (Drag สูง) และ Engine ต้องทำงานสูงสุดด้วย 1 Engine ที่เหลือ — Weight ที่สูงเกินจะทำให้ Gradient ต่ำกว่า 2.4% และไม่ผ่าน Certification</div>
+      </div>
+    </div>
+
+    <h3 class="section-h2">4.3 Runway Condition & Wind</h3>
+
+    <h3 class="section-h3">Runway Condition Assessment Matrix (RCAM)</h3>
+    <p class="prose">RCAM กำหนด Runway Condition Code (RCC) 0–6 เพื่อให้ Dispatcher คำนวณ Performance ได้ถูกต้อง Airport รายงานผ่าน SNOWTAM หรือ ATIS — ใช้ <strong>RCC ต่ำสุด</strong> จาก 3 Section (ต้น/กลาง/ท้าย Runway):</p>
+    <div class="rcc-grid">
+
+      <!-- RCC 6 — DRY -->
+      <div class="rcc-card">
+        <div class="rcc-header" style="background:rgba(30,122,62,0.25)">
+          <div class="rcc-num" style="background:#1E7A3E;color:white">6</div>
+          <strong style="color:#4DD99A">Dry</strong>
+        </div>
+        <div class="rcc-body">
+          <p class="rcc-def">ผิว Runway ปราศจากความชื้น น้ำ หิมะ หรือน้ำแข็งทุกชนิด</p>
+          <div class="rcc-stat">
+            <span class="rcc-badge" style="background:rgba(30,122,62,0.25);color:#4DD99A">μ ≥ 0.85</span>
+            <span class="rcc-badge" style="background:rgba(30,122,62,0.2);color:#4DD99A">LDR ×1.00</span>
+            <span class="rcc-badge" style="background:rgba(30,122,62,0.2);color:#4DD99A">Flex T/O ✓</span>
+          </div>
+          <p>ใช้ Dry Performance Charts โดยตรง — ไม่มี Correction Factor ใดๆ</p>
+          <p>Braking Action: N/A (ไม่รายงาน เพราะ Dry ไม่มีผลต่อ Braking)</p>
+          <p class="rcc-example">📌 ตัวอย่าง: Runway แห้งสนิท อากาศไม่มีฝน — ใช้ AFM Dry Charts คำนวณ V1/VR/V2 และ LDR ปกติ</p>
+        </div>
+      </div>
+
+      <!-- RCC 5 — WET <3mm -->
+      <div class="rcc-card">
+        <div class="rcc-header" style="background:rgba(33,150,196,0.2)">
+          <div class="rcc-num" style="background:#1A6FA8;color:white">5</div>
+          <strong style="color:#7BC8E8">Wet (&lt;3mm)</strong>
+        </div>
+        <div class="rcc-body">
+          <p class="rcc-def">น้ำบาง ≤ 3mm ปกคลุม Runway — เกิดจากฝนเล็กน้อย ละอองน้ำ หรือน้ำค้าง</p>
+          <div class="rcc-stat">
+            <span class="rcc-badge" style="background:rgba(33,150,196,0.2);color:#7BC8E8">μ ~0.70</span>
+            <span class="rcc-badge" style="background:rgba(33,150,196,0.2);color:#7BC8E8">LDR ×1.15</span>
+            <span class="rcc-badge" style="background:rgba(200,100,30,0.2);color:var(--gold2)">Flex: ตรวจ AFM</span>
+          </div>
+          <p>ใช้ Wet Performance Data จาก AFM — T/O Distance เพิ่มเล็กน้อย</p>
+          <p>Hydroplaning อาจเกิดถ้า Speed &gt; Onset Speed (9 × √Tire PSI)</p>
+          <p class="rcc-example">📌 ตัวอย่าง B737-800 LDR Dry = 1,500m → LDR Wet = 1,500 × 1.15 = <strong>1,725m</strong><br>ถ้า LDA = 2,000m → ยังมี Margin 275m — Dispatch ได้</p>
+        </div>
+      </div>
+
+      <!-- RCC 4 — COMPACTED SNOW -->
+      <div class="rcc-card">
+        <div class="rcc-header" style="background:rgba(33,100,160,0.2)">
+          <div class="rcc-num" style="background:#2E6B90;color:white">4</div>
+          <strong style="color:#7BC8E8">Compacted Snow</strong>
+        </div>
+        <div class="rcc-body">
+          <p class="rcc-def">หิมะที่ถูกบดอัดแน่นจนแข็ง ผิวหน้าเรียบ — มักพบหลังรถ Snow Plow ผ่าน</p>
+          <div class="rcc-stat">
+            <span class="rcc-badge" style="background:rgba(33,100,160,0.2);color:#7BC8E8">μ ~0.40</span>
+            <span class="rcc-badge" style="background:rgba(33,100,160,0.2);color:#7BC8E8">LDR ×1.6–2.0</span>
+            <span class="rcc-badge" style="background:rgba(192,57,43,0.2);color:#E57565">Flex: ห้ามใช้</span>
+          </div>
+          <p>ต้องใช้ Contaminated Runway Performance Charts จาก AFM — ไม่ใช่ Wet Charts</p>
+          <p>T/O Distance เพิ่มมาก · V1 อาจต้องลดลงให้ Accelerate-Stop ได้ใน ASDA</p>
+          <p class="rcc-example">📌 ตัวอย่าง: LDR Dry = 1,500m → LDR Compacted Snow ≈ 1,500 × 1.8 = <strong>2,700m</strong><br>ถ้า LDA = 2,500m → LDR &gt; LDA — <strong>Prohibit Landing!</strong></p>
+        </div>
+      </div>
+
+      <!-- RCC 3 — DRY/WET SNOW -->
+      <div class="rcc-card">
+        <div class="rcc-header" style="background:rgba(180,130,20,0.2)">
+          <div class="rcc-num" style="background:#A07010;color:white">3</div>
+          <strong style="color:var(--gold2)">Dry/Wet Snow</strong>
+        </div>
+        <div class="rcc-body">
+          <p class="rcc-def"><strong>Dry Snow:</strong> หิมะร่วนแห้ง ≤ 3mm (อุณหภูมิต่ำ) | <strong>Wet Snow:</strong> หิมะเปียกอมน้ำ ≤ 3mm (อุณหภูมิใกล้ 0°C)</p>
+          <div class="rcc-stat">
+            <span class="rcc-badge" style="background:rgba(180,130,20,0.2);color:var(--gold2)">μ ~0.30</span>
+            <span class="rcc-badge" style="background:rgba(180,130,20,0.2);color:var(--gold2)">LDR ×2.0–2.5</span>
+            <span class="rcc-badge" style="background:rgba(192,57,43,0.2);color:#E57565">Flex: ห้ามใช้</span>
+          </div>
+          <p>Wet Snow อันตรายกว่า Dry Snow เพราะ Viscous Hydroplaning เกิดได้ที่ Speed ต่ำกว่า</p>
+          <p>ต้องใช้ TOGA · ตรวจ Crosswind Limit ลดลงตาม Company Policy</p>
+          <p class="rcc-example">📌 ตัวอย่าง: LDR Dry = 1,500m → LDR Wet Snow ≈ 1,500 × 2.2 = <strong>3,300m</strong><br>ถ้า LDA = 3,200m → LDR &gt; LDA — <strong>Prohibit!</strong> ต้องรอ Runway Clear</p>
+        </div>
+      </div>
+
+      <!-- RCC 2 — STANDING WATER/ICE -->
+      <div class="rcc-card">
+        <div class="rcc-header" style="background:rgba(150,40,30,0.2)">
+          <div class="rcc-num" style="background:#8B1A10;color:white">2</div>
+          <strong style="color:#E57565">Standing Water / Slush</strong>
+        </div>
+        <div class="rcc-body">
+          <p class="rcc-def"><strong>Standing Water:</strong> น้ำขังลึก &gt;3mm | <strong>Slush:</strong> หิมะละลายปนน้ำ (ขาวขุ่น เหลว) — เกิดที่ 0°C</p>
+          <div class="rcc-stat">
+            <span class="rcc-badge" style="background:rgba(150,40,30,0.2);color:#E57565">μ ~0.15–0.30</span>
+            <span class="rcc-badge" style="background:rgba(150,40,30,0.2);color:#E57565">LDR ×2.5–3.0+</span>
+            <span class="rcc-badge" style="background:rgba(150,40,30,0.3);color:#E57565">Flex: ห้าม</span>
+          </div>
+          <p>Dynamic Hydroplaning รุนแรง — น้ำถูกดันเข้า Tire อย่างรวดเร็ว</p>
+          <p>Slush ยังทำให้ Tire Drag เพิ่ม → T/O Distance เพิ่มมากกว่าน้ำธรรมดา</p>
+          <p>บาง Operator <strong>ห้าม T/O</strong> บน Standing Water/Slush ทุกกรณี</p>
+          <p class="rcc-example">📌 ตัวอย่าง: LDR Dry = 1,500m → LDR Standing Water ≈ 1,500 × 2.7 = <strong>4,050m</strong><br>แทบทุก Runway ไม่พอ — <strong>Ground Until Clear</strong></p>
+        </div>
+      </div>
+
+      <!-- RCC 1 — ICE/FROST -->
+      <div class="rcc-card">
+        <div class="rcc-header" style="background:rgba(170,40,30,0.25)">
+          <div class="rcc-num" style="background:#C0392B;color:white">1</div>
+          <strong style="color:#FF6B5B">Ice / Frost</strong>
+        </div>
+        <div class="rcc-body">
+          <p class="rcc-def"><strong>Ice:</strong> น้ำแข็งใส แข็งมาก เกาะผิว Runway | <strong>Frost:</strong> ผลึกน้ำแข็งบาง เกิดตอนกลางคืน Temp ต่ำกว่า Dew Point</p>
+          <div class="rcc-stat">
+            <span class="rcc-badge" style="background:rgba(170,40,30,0.25);color:#FF6B5B">μ ~0.05–0.15</span>
+            <span class="rcc-badge" style="background:rgba(170,40,30,0.25);color:#FF6B5B">LDR ×3.0+</span>
+            <span class="rcc-badge" style="background:rgba(100,0,0,0.3);color:#FF6B5B">T/O: Extreme Caution</span>
+          </div>
+          <p>Frost บน Runway อาจมองไม่เห็นด้วยตาเปล่า (Black Frost)</p>
+          <p>ต้องการ Max Autobrake + Full Reverse Thrust + ระยะ Rollout ยาวมาก</p>
+          <p>Frost บน <strong>Wing</strong> อันตรายยิ่งกว่า — ทำลาย Airfoil Shape → ห้าม T/O เด็ดขาด</p>
+          <p class="rcc-example">📌 ตัวอย่าง: LDR Dry = 1,500m → LDR Ice ≈ 1,500 × 3.2 = <strong>4,800m</strong><br>บาง Operator <strong>Prohibit All Operations</strong> ที่ RCC 1</p>
+        </div>
+      </div>
+
+      <!-- RCC 0 — WET ICE -->
+      <div class="rcc-card" style="grid-column: 1 / -1; max-width: 340px;">
+        <div class="rcc-header" style="background:rgba(80,0,0,0.4)">
+          <div class="rcc-num" style="background:#6B0000;color:white">0</div>
+          <strong style="color:#FF4444">Wet Ice</strong>
+        </div>
+        <div class="rcc-body">
+          <p class="rcc-def">น้ำแข็งที่มีฟิล์มน้ำบางๆ ปกคลุมด้านบน — เกิดเมื่ออุณหภูมิเริ่มสูงขึ้นจากต่ำกว่า 0°C หรือจากฝนตกบน Ice Sheet</p>
+          <div class="rcc-stat">
+            <span class="rcc-badge" style="background:rgba(100,0,0,0.4);color:#FF4444">μ &lt;0.05 (เกือบ Zero)</span>
+            <span class="rcc-badge" style="background:rgba(100,0,0,0.4);color:#FF4444">Braking: NIL</span>
+            <span class="rcc-badge" style="background:rgba(100,0,0,0.4);color:#FF4444">Landing NOT Recommended</span>
+          </div>
+          <p>น้ำชั้นบางๆ ทำหน้าที่เป็น Lubricant บน Ice → Friction หายไปเกือบหมด</p>
+          <p>Reverse Thrust และ Brakes แทบไม่มีประสิทธิภาพ — อากาศยานลื่นไถลต่อ</p>
+          <p><strong>Takeoff: Prohibit ทุกกรณี · Landing: Emergency เท่านั้น</strong></p>
+          <p class="rcc-example">📌 ตัวอย่าง: ลองคำนวณ LDR = 1,500 × ??? → ไม่มีสูตรใดใช้ได้ เพราะ μ ≈ 0 — หยุดไม่ได้ ห้าม Land</p>
+        </div>
+      </div>
+
+    </div>
+
+    <h3 class="section-h3">SNOWTAM & Braking Action Reporting</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>แหล่งข้อมูล</th><th>รูปแบบ</th><th>อายุ</th><th>กฎการใช้งาน</th></tr></thead>
+        <tbody>
+          <tr><td><strong>SNOWTAM</strong></td><td>ICAO Standard Format — RCC แต่ละ Third พร้อม Contaminant ชนิด/ความลึก</td><td>8 ชั่วโมง</td><td>ใช้เป็น Baseline</td></tr>
+          <tr><td><strong>PIREP (Braking Action)</strong></td><td>GOOD / GOOD-MED / MEDIUM / MED-POOR / POOR / NIL จาก Crew ที่เพิ่ง Land</td><td>30 นาที หรือน้อยกว่า</td><td>ถ้าแย่กว่า SNOWTAM → <strong>ใช้ PIREP</strong></td></tr>
+          <tr><td><strong>CFME Friction Report</strong></td><td>ค่า μ จากรถวัด Friction เช่น Mu-meter, Skiddometer</td><td>ตามที่ Airport กำหนด</td><td>ประกอบการตัดสินใจ</td></tr>
+          <tr><td><strong>ATIS / D-ATIS</strong></td><td>Braking Action Summary</td><td>อัปเดตทุก 30–60 นาที</td><td>ตรวจก่อน Dispatch เสมอ</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="infobox red">
+      <div class="infobox-header">⚠️ Hydroplaning — ภัยเงียบบน Wet Runway</div>
+      <div class="infobox-body">
+        <p>Hydroplaning เกิดเมื่อ Tire ลอยบนชั้นน้ำ สูญเสีย Friction กับ Runway เกือบเป็นศูนย์ มี 3 ประเภท:</p>
+        <p>• <strong>Dynamic Hydroplaning:</strong> Speed สูงพอ Tire ลอยบนฟิล์มน้ำ — เริ่มที่ 9 × √Tire Pressure (psi) kt</p>
+        <p>• <strong>Viscous Hydroplaning:</strong> ผิว Runway เรียบหรือมี Rubber Deposits — เกิดที่ Speed ต่ำกว่า</p>
+        <p>• <strong>Reverted Rubber:</strong> Tire ล็อกนาน ผิวยางละลาย สร้าง Steam ใต้ Tire</p>
+      </div>
+    </div>
+
+    <div class="formula">Dynamic Hydroplaning Onset Speed (kt) ≈ 9 × √(Tire Inflation Pressure in psi)
+
+ตัวอย่าง B737-800: Tire ~200 psi → Onset ≈ 9 × √200 ≈ 127 kt
+                  Tire ~180 psi → Onset ≈ 9 × √180 ≈ 121 kt
+→ ถ้า Landing Speed สูงกว่านี้และ Runway เปียก มีความเสี่ยง Hydroplaning ทันที</div>
+
+    <div class="infobox red">
+      <div class="infobox-header">⚠️ Double Jeopardy — MEL + Contaminated Runway</div>
+      <div class="infobox-body">
+        <p>เมื่อ MEL Items หลายตัวทำงานพร้อม Contaminated Runway ผลกระทบ <strong>ทบทวีกัน ไม่ใช่บวกกัน</strong></p>
+        <p>• ตัวอย่าง: Anti-Skid Inop (LDR ×1.45) + Wet Runway (LDR ×1.15) + Reverser Inop = LDR อาจเพิ่ม 70–80%</p>
+        <p>• ต้องใช้ <strong>Combined Effect Data</strong> จาก AFM Supplement ไม่ใช่คูณ Factor แยกกัน</p>
+        <p>• หาก LDR &gt; LDA → Prohibit หรือรอ Runway ดีขึ้น</p>
+      </div>
+    </div>
+
+    <h3 class="section-h2">4.4 Wind Corrections</h3>
+
+    <div class="formula">Effective Headwind = Wind Speed × cos(θ)     θ = Wind Angle จาก Runway Heading
+Effective Crosswind = Wind Speed × sin(θ)
+
+ตัวอย่าง: Wind 060° / 20 kt · Runway 030°
+          Wind Angle = 060 − 030 = 30°
+          Headwind Component = 20 × cos(30°) = 20 × 0.866 = 17.3 kt
+          Crosswind Component = 20 × sin(30°) = 20 × 0.500 = 10.0 kt</div>
+
+    <div class="infobox gold">
+      <div class="infobox-header">📌 Wind Effect — Rules of Thumb</div>
+      <div class="infobox-body">
+        <p>• <strong>Headwind 1 kt</strong> ≈ ลด Takeoff Distance ~1.5% — ช่วยได้พอสมควร</p>
+        <p>• <strong>Tailwind 1 kt</strong> ≈ เพิ่ม Takeoff Distance ~5% — ผลกระทบมากกว่า Headwind ถึง <strong>3 เท่า!</strong></p>
+        <p>• Max Tailwind ที่อนุญาตโดยทั่วไป = <strong>10 kt</strong> (ดู AFM ของแต่ละ Type)</p>
+        <p>• Gusty Wind (ใช้สำหรับ Performance): Mean Wind + ½ Gust Value</p>
+        <p>• Gusty Wind (ใช้สำหรับ Crosswind Limit): Mean Wind + Full Gust (Conservative)</p>
+      </div>
+    </div>
+
+    <h3 class="section-h3">Wind Component Chart — การอ่านค่าเร็ว</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Wind Angle จาก Runway</th><th>Headwind Factor</th><th>Crosswind Factor</th><th>ตัวอย่าง Wind 20 kt</th></tr></thead>
+        <tbody>
+          <tr><td>0° (ตรงหน้า)</td><td>100% (×1.00)</td><td>0%</td><td>HW = 20 kt · XW = 0 kt</td></tr>
+          <tr><td>10°</td><td>98% (×0.98)</td><td>17%</td><td>HW = 19.7 kt · XW = 3.5 kt</td></tr>
+          <tr><td>20°</td><td>94% (×0.94)</td><td>34%</td><td>HW = 18.8 kt · XW = 6.8 kt</td></tr>
+          <tr><td>30°</td><td>87% (×0.87)</td><td>50%</td><td>HW = 17.3 kt · XW = 10.0 kt</td></tr>
+          <tr><td>45°</td><td>71% (×0.71)</td><td>71%</td><td>HW = 14.1 kt · XW = 14.1 kt</td></tr>
+          <tr><td>60°</td><td>50% (×0.50)</td><td>87%</td><td>HW = 10.0 kt · XW = 17.3 kt</td></tr>
+          <tr><td>75°</td><td>26% (×0.26)</td><td>97%</td><td>HW = 5.2 kt · XW = 19.3 kt</td></tr>
+          <tr><td>90° (ด้านข้าง)</td><td>0%</td><td>100% (×1.00)</td><td>HW = 0 kt · XW = 20 kt</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="section-h3">Crosswind Limit — Dispatcher ต้องตรวจ</h3>
+    <p class="prose">Crosswind Component ห้ามเกิน Maximum Demonstrated Crosswind ของ Aircraft Type นั้น แต่ที่สำคัญกว่าคือ <strong>Company Operational Limit</strong> ซึ่งมักต่ำกว่าค่า Demonstrated:</p>
+    <div class="infobox red">
+      <div class="infobox-header">⚠️ Demonstrated Crosswind ≠ Operational Limit</div>
+      <div class="infobox-body">
+        <p>Demonstrated Crosswind คือค่าที่ Test Pilot ทดสอบไว้ ไม่ใช่ Hard Limit สำหรับ Line Operations</p>
+        <p>• Company Policy มักกำหนด Max XW ต่ำกว่า เช่น B737-800 Demonstrated = 33 kt แต่ Company อาจกำหนด 25 kt</p>
+        <p>• <strong>Wet/Contaminated Runway:</strong> Max XW ลดลงอีก ตาม RCC — ดู OPS Manual</p>
+        <p>• <strong>Low-Time Crew / Training Flight:</strong> อาจมี Limit ต่ำกว่าปกติ ดู Company SOPs</p>
+        <p>• Dispatcher ต้องตรวจ Wind ทั้ง Expected ณ Departure Time และ Trend ว่าจะเพิ่มขึ้นไหม</p>
+      </div>
+    </div>
+
+    <h3 class="section-h3">Wind Shear & Microburst — ผลต่อ Performance</h3>
+    <p class="prose">Wind Shear คือการเปลี่ยนแปลงของ Wind Speed หรือ Direction อย่างรวดเร็วในระยะสั้น มีผลรุนแรงต่อ Takeoff และ Approach:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ประเภท</th><th>ลักษณะ</th><th>ผลต่อ Performance</th><th>Dispatcher Action</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Headwind → Tailwind Shear</strong></td><td>เจอ HW ก่อน แล้วเปลี่ยนเป็น TW ทันที</td><td>Airspeed ลด → Lift ลด → ความสูงลด — <strong>อันตราย</strong></td><td>ห้าม Dispatch ถ้า SIGMET Wind Shear</td></tr>
+          <tr><td><strong>Tailwind → Headwind Shear</strong></td><td>เจอ TW ก่อน แล้วเปลี่ยนเป็น HW</td><td>Airspeed เพิ่ม → Overshoot Glidepath</td><td>แจ้ง Crew ใน Weather Briefing</td></tr>
+          <tr><td><strong>Microburst</strong></td><td>Downdraft รุนแรงจาก Thunderstorm</td><td>HW ก่อน → Downdraft → TW ทันที — รุนแรงที่สุด</td><td>ห้าม Dispatch เด็ดขาด</td></tr>
+          <tr><td><strong>Low Level Wind Shear (LLWS)</strong></td><td>เกิดต่ำกว่า 1,500 ft AGL</td><td>เป็นอันตรายมากระหว่าง Approach</td><td>ตรวจ LLWS Alert, PIREP</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="infobox red">
+      <div class="infobox-header">⚠️ Wind Shear — Dispatcher ต้องระวัง</div>
+      <div class="infobox-body">
+        <p>• ถ้ามี SIGMET หรือ Significant METAR/TAF ระบุ Wind Shear → <strong>ห้ามใช้ Flex/Reduced Thrust Takeoff</strong> ต้องใช้ TOGA</p>
+        <p>• ตรวจ PIREP จาก Aircraft ก่อนหน้า ถ้ารายงาน Moderate หรือ Severe Wind Shear → แจ้ง Crew ทันที</p>
+        <p>• หาก Wind Shear Warning System (WSAS) ที่สนามบินออก Alert → Coordinate กับ Crew ก่อน Departure</p>
+        <p>• Microburst หาก Detected → ห้าม Dispatch จนกว่า All Clear</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</div><!-- end #main partial -->
+<!-- ═══════════════════════════════════════════════════
+     CHAPTER 5 — EN-ROUTE & CRUISE
+════════════════════════════════════════════════════ -->
+<section class="chapter-section" id="ch5">
+  <div class="chapter-header">
+    <div class="ch-badge"><span>5</span> En-Route & Cruise Performance</div>
+    <h2 class="ch-title">Climb · Cruise Efficiency<br>&amp; Engine Inoperative</h2>
+    <p class="ch-desc">เมื่ออากาศยานออกจาก Takeoff Phase เข้าสู่ En-Route Phase Dispatcher ยังคงมีหน้าที่ติดตาม Fuel, Routing, และเตรียมแผนสำรองตลอดเส้นทาง</p>
+  </div>
+  <div class="chapter-body">
+
+    <h3 class="section-h2">5.1 Climb Performance</h3>
+    <p class="prose">ความแตกต่างระหว่าง Climb Gradient และ Climb Rate มีความสำคัญมาก เพราะใช้ในบริบทต่างกัน:</p>
+    <div class="formula">Climb Gradient (%) = Rate of Climb (ft/min) / (Ground Speed × 101.27)
+
+VX = Best Angle of Climb → ระยะแนวนอนสั้นสุด (ผ่าน Obstacle)
+VY = Best Rate of Climb → ขึ้นถึง Cruise Altitude เร็วที่สุด</div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ปัจจัย</th><th>ผลต่อ Climb Performance</th><th>ระดับผลกระทบ</th></tr></thead>
+        <tbody>
+          <tr><td>Temperature สูง (Hot Day)</td><td>Thrust ลด, ROC ลด, Climb ช้าลง</td><td>สูงมาก</td></tr>
+          <tr><td>น้ำหนักมาก (High Weight)</td><td>ต้องใช้ Thrust มากขึ้น, ROC ลดลง</td><td>สูง</td></tr>
+          <tr><td>Altitude สูง</td><td>Density ต่ำ, Engine ทำงานหนักขึ้น</td><td>สูง</td></tr>
+          <tr><td>Anti-Ice ON</td><td>Engine Bleed เพิ่ม, Net Thrust ลด ~5-10%</td><td>ปานกลาง</td></tr>
+          <tr><td>Engine Inoperative</td><td>Thrust ลด 50%, Climb Performance แย่ลงอย่างมาก</td><td>วิกฤต</td></tr>
+          <tr><td>Flap Extended</td><td>Drag เพิ่มมาก, Climb Gradient ลดลง</td><td>สูง</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="infobox blue">
+      <div class="infobox-header">📊 Optimum Cruise Altitude</div>
+      <div class="infobox-body">
+        <p><strong>Optimum Altitude</strong> = ระดับที่ Specific Range (NM ต่อ kg Fuel) สูงสุด</p>
+        <p>• เพิ่มขึ้นเมื่อน้ำหนักลดลง (เมื่อเผา Fuel ไปเรื่อยๆ ระหว่างบิน)</p>
+        <p>• <strong>Step Climb Strategy:</strong> FL350 → เมื่อเบาพอ → ขึ้น FL370 → FL390</p>
+        <p>• Dispatcher วางแผน Step Point ในเส้นทาง โดยดู Fuel Saving เทียบกับ ATC Constraint</p>
+        <p>• กฎทั่วไป: ทุก 1,000 ft ที่ขึ้นได้ ประหยัด Fuel ได้ประมาณ 1-2%</p>
+      </div>
+    </div>
+
+    <h3 class="section-h2">5.2 Cruise Efficiency</h3>
+    <h3 class="section-h3">Cost Index (CI)</h3>
+    <p class="prose">Cost Index คืออัตราส่วนระหว่างต้นทุนด้านเวลาต่อต้นทุนด้าน Fuel ซึ่ง Dispatcher ใช้บอก FMS ว่าควร Optimize ไปทางไหน:</p>
+    <div class="formula">CI = Cost of Time ($/hr) / Cost of Fuel ($/kg)
+
+Specific Air Range (SAR) = TAS (knots) / Fuel Flow (kg/hr)  [NM per kg]
+
+ตัวอย่าง: ต้นทุนเวลา = $3,000/hr · ราคา Fuel = $0.60/kg
+          CI = 3,000 / 0.60 = 50  →  FMS ใช้ Economy-to-High Speed Profile</div>
+
+    <div class="infobox blue">
+      <div class="infobox-header">📐 ตัวอย่างการเลือก CI ในสถานการณ์จริง</div>
+      <div class="infobox-body">
+        <p><strong>เที่ยวบิน BKK–NRT (ปกติ) · ออกตรงเวลา · Fuel ราคาปกติ</strong></p>
+        <p>→ ใช้ CI = 40–60 (Long-Range Cruise) — สมดุล Fuel กับ Time</p>
+        <p><strong>เที่ยวบิน BKK–NRT · Delay 45 นาที จาก Gate · ต้องชดเชย</strong></p>
+        <p>→ Dispatcher เพิ่ม CI เป็น 80–100 → FMS บินเร็วขึ้น ~10 kt → ประหยัดเวลา ~15 นาที</p>
+        <p>→ Fuel เพิ่มขึ้น ~200–300 kg → Trade-off: ค่า Fuel เพิ่ม ~$120–180 vs ค่าล่าช้า Connecting Pax</p>
+        <p><strong>เที่ยวบิน Ferry / Fuel Crisis · Fuel สำรองน้อย</strong></p>
+        <p>→ ใช้ CI = 0 (MRC) → บินช้าที่สุด → Fuel Burn ต่ำที่สุด → Range ไกลที่สุด</p>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>CI Value</th><th>Mode</th><th>ลักษณะการบิน</th><th>ใช้เมื่อ</th></tr></thead>
+        <tbody>
+          <tr><td>CI = 0</td><td>Max Range (MRC)</td><td>Mach ต่ำสุด · Fuel ต่ำสุด</td><td>Fuel Crisis · Ferry Flight</td></tr>
+          <tr><td>CI ต่ำ (10-30)</td><td>Economy Mode</td><td>Mach ต่ำ · ประหยัด</td><td>Fuel ราคาสูงมาก</td></tr>
+          <tr><td>CI กลาง (30-60)</td><td>Long Range Cruise</td><td>สมดุล Time/Fuel</td><td>ปกติทั่วไป</td></tr>
+          <tr><td>CI สูง (60-100)</td><td>High Speed</td><td>Mach สูงขึ้น · เร็ว</td><td>ล่าช้า ต้องเร่งเวลา</td></tr>
+          <tr><td>CI = Max</td><td>Max Speed</td><td>VMO/MMO · Fuel สูงมาก</td><td>Emergency ล่าช้า</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="section-h2">5.3 Engine Inoperative En-Route — Drift Down</h3>
+    <p class="prose">เมื่อ Engine ขัดข้องระหว่างเส้นทาง อากาศยานต้องลดระดับลงไปยัง Single Engine Cruise Altitude ที่สามารถ Maintain ได้ เรียกว่า <strong>Drift Down</strong>:</p>
+
+    <div class="infobox red">
+      <div class="infobox-header">⚠️ Net Drift Down Path Requirements</div>
+      <div class="infobox-body">
+        <p>• <strong>FAR 121:</strong> Net Takeoff Flight Path ต้องสูงกว่า Terrain อย่างน้อย <strong>2,000 ft</strong> เหนือพื้นที่ภูเขา / <strong>1,000 ft</strong> พื้นที่ราบ</p>
+        <p>• คำนวณด้วย ISA + 10°C และ Adverse Wind</p>
+        <p>• หาก Route ผ่านเทือกเขาสูง อาจต้องจำกัด TOW เพิ่มเติมเพื่อให้ผ่าน Drift Down Check</p>
+        <p>• Dispatcher ต้องตรวจ MEA (Minimum En-Route Altitude) ตลอดเส้นทางด้วย</p>
+      </div>
+    </div>
+
+    <div class="infobox blue">
+      <div class="infobox-header">📐 ตัวอย่าง Engine Failure Drift Down — FL350 → Single Engine Altitude</div>
+      <div class="infobox-body">
+        <p><strong>B777-300ER · FL350 · TOW 280,000 kg · ISA+10 · Engine Failure เหนือ Indian Ocean</strong></p>
+        <p>• Engine Failure → Thrust ลด 50% → ไม่สามารถ Maintain FL350</p>
+        <p>• Drift Down เริ่ม: ลดระดับด้วย Max Continuous Thrust (Remaining Engine) + Optimum Drift Down Speed</p>
+        <p>• Single Engine Cruise Altitude ≈ FL240–FL260 (ขึ้นกับ Weight และ Temperature)</p>
+        <p>• ระยะ Horizontal ขณะ Drift Down จาก FL350 ถึง FL240 ≈ 150–180 NM</p>
+        <p>• Dispatcher ต้องตรวจ Terrain ตลอดเส้นทาง Drift Down ว่าสูงกว่า MEA + 1,000 ft (Flat) หรือ + 2,000 ft (Mountain)</p>
+        <p>• ถ้า Route ผ่านภูเขาสูง → อาจต้องจำกัด TOW เพื่อให้ Single Engine Altitude สูงพอ</p>
+      </div>
+    </div>
+
+    <div class="infobox blue">
+      <div class="infobox-header">🗺️ ETOPS / EDTO En-Route Requirements</div>
+      <div class="infobox-body">
+        <p>Extended Operations กำหนด Diversion Time Limits ที่ทุก Point บน Route ต้องไม่เกิน:</p>
+        <p>• <strong>ETOPS 60:</strong> ทุก Point ≤ 60 นาที (Single Engine) จาก Adequate Airport</p>
+        <p>• <strong>ETOPS 120:</strong> ต้องมี Approval + Extra Fuel + Systems Requirements พิเศษ</p>
+        <p>• <strong>ETOPS 180/240+:</strong> ต้องมี Authorization พิเศษ + อาจต้องการ 2 Alternates</p>
+        <p>• Dispatcher ต้องตรวจ <strong>Critical Fuel Scenario</strong> ที่ Most Critical Point (MCP)</p>
+        <p>• ETOPS Alternate ต้องมี Weather ที่ ETA ± 1 ชั่วโมง ≥ Authorized Minima</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     CHAPTER 6 — LANDING PERFORMANCE
+════════════════════════════════════════════════════ -->
+<section class="chapter-section" id="ch6">
+  <div class="chapter-header">
+    <div class="ch-badge"><span>6</span> Landing Performance</div>
+    <h2 class="ch-title">Landing Distances<br>&amp; Climb Requirements</h2>
+    <p class="ch-desc">Landing Performance ไม่ใช่แค่ "จะหยุดทัน Runway หรือเปล่า" แต่รวมถึงการรับประกันว่าหากต้อง Go-Around อากาศยานจะสามารถปีนพ้น Terrain ได้ด้วย Engine หนึ่งตัว</p>
+  </div>
+  <div class="chapter-body">
+
+    <h3 class="section-h2">6.1 Landing Distances</h3>
+    <div class="formula">Landing Distance Required (LDR) ≤ Landing Distance Available (LDA)
+
+Dispatch Rule (FAR 121.195): Actual LDR × 1.667 ≤ LDA
+หรือในอีกรูปแบบ:  Actual LDR ≤ LDA × 0.60  (ใช้ได้ไม่เกิน 60% ของ Runway)</div>
+
+    <div class="infobox blue">
+      <div class="infobox-header">📐 ตัวอย่างคำนวณ Landing Distance — Dispatch Check</div>
+      <div class="infobox-body">
+        <p><strong>สถานการณ์:</strong> B737-800 · Destination SIN · Runway 02L · LDA = 3,660m · Dry · Landing Weight = 60,000 kg</p>
+        <p>• Actual LDR จาก AFM Chart (LW 60,000 kg · Dry · Sea Level) = <strong>1,530m</strong></p>
+        <p>• Dispatch Rule: LDR Factored = 1,530 × 1.667 = <strong>2,551m</strong></p>
+        <p>• ตรวจ: 2,551m ≤ 3,660m LDA ✓ → <strong>Dispatch ได้</strong></p>
+        <p>• Margin = 3,660 − 2,551 = 1,109m (30% Runway เหลือ)</p>
+        <p><strong>เปลี่ยน Runway เป็น Wet (RCC 5):</strong></p>
+        <p>• Wet LDR = 1,530 × 1.15 = 1,760m → Factored = 1,760 × 1.667 = <strong>2,934m</strong></p>
+        <p>• ตรวจ: 2,934m ≤ 3,660m LDA ✓ → <strong>Dispatch ได้แม้ Wet</strong></p>
+      </div>
+    </div>
+
+    <div class="infobox red">
+      <div class="infobox-header">⚠️ Dispatch vs. In-Flight Landing Rules — ต่างกันชัดเจน!</div>
+      <div class="infobox-body">
+        <p>• <strong>Dispatch Rule (FAR 121.195):</strong> LDR × 1.667 ≤ LDA (ใช้ได้ไม่เกิน 60% ของ Runway) — ตรวจ ≥ 1 ชั่วโมงก่อนถึง</p>
+        <p>• <strong>In-Flight (กัปตันตัดสินใจ):</strong> อาจใช้ Actual Landing Distance ≤ LDA ได้ ภายใต้เงื่อนไขบางอย่าง</p>
+        <p>• Dispatcher <strong>ต้องใช้กฎที่เข้มงวดกว่าเสมอ</strong> — อย่าให้ In-Flight Flexibility มาลดมาตรฐาน Dispatch</p>
+      </div>
+    </div>
+
+    <h3 class="section-h3">ปัจจัยที่เพิ่ม Landing Distance</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ปัจจัย</th><th>ผล</th><th>ขนาดผลกระทบ (โดยประมาณ)</th></tr></thead>
+        <tbody>
+          <tr><td>Tailwind 10 kt</td><td>Distance เพิ่ม</td><td>~30–50% (ผลกระทบรุนแรงมาก)</td></tr>
+          <tr><td>Wet Runway</td><td>Braking ลด</td><td>~15–25% เพิ่มจาก Dry</td></tr>
+          <tr><td>Elevation สูง 1,000 ft</td><td>IAS/TAS ต่ำกว่าจริง</td><td>~5% เพิ่ม</td></tr>
+          <tr><td>OAT สูงขึ้น 10°C</td><td>TAS ที่ VREF สูงขึ้น</td><td>~2% เพิ่ม</td></tr>
+          <tr><td>Weight เพิ่ม 5,000 kg</td><td>Kinetic Energy ↑</td><td>~10% เพิ่ม</td></tr>
+          <tr><td>VREF +5 kt (Additive)</td><td>Speed สูงกว่า Target</td><td>~15–20% เพิ่ม</td></tr>
+          <tr><td>Thrust Reverser Inop (1 ตัว)</td><td>Stopping Force ลด</td><td>ดู AFM MEL — อาจ Require Longer Runway</td></tr>
+          <tr><td>Anti-Skid Inop</td><td>Braking ลดมาก</td><td>Dry: ×1.45 · Wet อาจ Prohibit</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="section-h2">6.2 Approach Climb & Landing Climb</h3>
+    <p class="prose">หาก Go-Around จำเป็น อากาศยานต้องสามารถปีนได้ตาม Gradient ขั้นต่ำที่กำหนด:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Requirement</th><th>Configuration</th><th>Min. Gradient</th><th>Engine Condition</th></tr></thead>
+        <tbody>
+          <tr><td>Approach Climb</td><td>Approach Flap, Gear Up</td><td>≥ 2.1% (2-eng) · ≥ 2.4% (4-eng)</td><td>One Engine Inoperative</td></tr>
+          <tr><td>Landing Climb</td><td>Full Flap, Gear Down</td><td>≥ 3.2%</td><td>All Engines Operating</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body">
+        <div class="callout-title">หาก Landing Weight เกิน Climb-Limited LW</div>
+        <div class="callout-text">ต้องเลือกวิธีแก้: (1) Hold เพื่อเผา Fuel ให้น้ำหนักลดลง · (2) Divert ไป Alternate ที่ Runway ยาวกว่า · (3) ลด Payload ก่อน Dispatch เพื่อป้องกันปัญหาตั้งแต่ต้น</div>
+      </div>
+    </div>
+
+    <h3 class="section-h2">6.3 Wet & Contaminated Runway Landing</h3>
+    <ul class="list-block">
+      <li>ตรวจสอบ RCR / SNOWTAM ล่าสุดก่อน Dispatch และขอ Update In-Flight ผ่าน ACARS</li>
+      <li>ใช้ <strong>Lowest RCC</strong> ของ 3 Section (1/3 ต้น, กลาง, ท้าย Runway)</li>
+      <li>หาก PIREP จาก Aircraft ก่อนหน้าแย่กว่า SNOWTAM ให้ใช้ค่าจาก PIREP</li>
+      <li>Touchdown Zone ที่ Displaced Threshold — ตรวจ LDA จริงไม่ใช่ Total Runway Length</li>
+    </ul>
+
+    <div class="infobox blue">
+      <div class="infobox-header">🛬 Stopping Devices & Performance Impact</div>
+      <div class="infobox-body">
+        <p>• <strong>Autobrake:</strong> LO / MED / HI / MAX — ยิ่งสูงยิ่งหยุดสั้น แต่ Passenger Comfort ลด</p>
+        <p>• <strong>Spoilers/Ground Spoilers:</strong> Dump Lift → เพิ่ม Wheel Load → Tire Friction ดีขึ้น</p>
+        <p>• <strong>Thrust Reversers:</strong> มีประสิทธิภาพสูงเฉพาะช่วง Speed สูง (> 80 kt) ประสิทธิภาพลดเร็วมากตามความเร็ว</p>
+        <p>• <strong>MEL: Reverser Inop</strong> → ต้องคำนวณ LDR ใหม่จาก AFM Supplement ก่อน Dispatch</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     CHAPTER 7 — FUEL PLANNING & ETOPS
+════════════════════════════════════════════════════ -->
+<section class="chapter-section" id="ch7">
+  <div class="chapter-header">
+    <div class="ch-badge"><span>7</span> Fuel Planning & ETOPS</div>
+    <h2 class="ch-title">Fuel Policy, Reserves<br>&amp; ETOPS Planning</h2>
+    <p class="ch-desc">Fuel Planning คือหนึ่งในหน้าที่ที่ต้องรับผิดชอบมากที่สุดของ Flight Dispatcher ทุก Component มีเหตุผลและมาจาก Regulation ที่ชัดเจน</p>
+  </div>
+  <div class="chapter-body">
+
+    <h3 class="section-h2">7.1 Fuel Policy & Reserves</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Fuel Component</th><th>ICAO Annex 6</th><th>FAR 121</th><th>ความหมาย</th></tr></thead>
+        <tbody>
+          <tr><td>Taxi Fuel</td><td>Actual + Margin</td><td>Actual Estimate</td><td>ใช้ก่อน Takeoff — หักจาก Block Fuel</td></tr>
+          <tr><td>Trip Fuel</td><td>Point-to-Point</td><td>Block Fuel Estimate</td><td>จาก T/O จนถึง Landing ปลายทาง</td></tr>
+          <tr><td>Contingency Fuel</td><td>≥ 5% Trip หรือ 5 นาที</td><td>≥ 10% Trip Fuel</td><td>ความผันแปรระหว่างเส้นทาง</td></tr>
+          <tr><td>Alternate Fuel</td><td>Dest → Alt (ถ้าต้องการ)</td><td>Dest → Alt (ถ้าต้องการ)</td><td>บินจากปลายทางไป Alternate</td></tr>
+          <tr><td>Final Reserve</td><td>30 นาที (Jet)</td><td>45 นาที (Piston)</td><td><strong>ห้ามแตะ!</strong> Emergency เท่านั้น</td></tr>
+          <tr><td>Additional Fuel</td><td>Dispatcher Discretion</td><td>As Required</td><td>Weather, Delay, Routing, ETOPS</td></tr>
+          <tr><td>Extra Fuel</td><td>Captain Request</td><td>Captain Request</td><td>กัปตันร้องขอเพิ่มเติม</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="section-h3">เมื่อไรต้องกำหนด Alternate Airport?</h3>
+    <div class="infobox gold">
+      <div class="infobox-header">📐 1-2-3 Alternate Rule (FAR 121.619)</div>
+      <div class="infobox-body">
+        <p>ต้องกำหนด Alternate ถ้า ณ เวลา <strong>ETA ± 1 ชั่วโมง</strong> ที่ Destination:</p>
+        <p>• Ceiling &lt; <strong>2,000 ft</strong>  หรือ  Visibility &lt; <strong>3 SM</strong></p>
+        <p>• หาก Weather ดีกว่าเงื่อนไขนี้ = ไม่จำเป็นต้องมี Alternate (ตาม FAR เท่านั้น)</p>
+        <p>• <strong>Company Policy อาจเข้มงวดกว่า</strong> — ตรวจ OPS Specs / OPS Manual ด้วยเสมอ</p>
+      </div>
+    </div>
+
+    <div class="table-wrap" style="margin-top:16px">
+      <table>
+        <thead><tr><th>กรณี</th><th>ต้องกำหนด Alternate?</th></tr></thead>
+        <tbody>
+          <tr><td>Weather ต่ำกว่า 1-2-3 Rule</td><td>✅ ต้องกำหนด</td></tr>
+          <tr><td>IAP (Instrument Approach) ไม่ Available ที่ Destination</td><td>✅ ต้องกำหนด</td></tr>
+          <tr><td>Destination Airport มี NOTAM จำกัดการใช้งาน</td><td>✅ ต้องกำหนด</td></tr>
+          <tr><td>Company Policy กำหนดให้ต้องมี Alternate เสมอ</td><td>✅ ต้องกำหนด</td></tr>
+          <tr><td>IFR Flight ที่ Weather ดีกว่า 1-2-3 Rule</td><td>⚠️ FAR: ไม่จำเป็น · แต่ Dispatcher ควรพิจารณา</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="section-h2">7.2 ETOPS Fuel Planning</h3>
+    <p class="prose">ETOPS Fuel Planning ต้องคำนวณ <strong>Critical Fuel Scenario</strong> ที่จุดวิกฤตบนเส้นทาง ซึ่งเป็นจุดที่ไกลจาก Adequate Airport ที่สุด:</p>
+
+    <div class="steps">
+      <div class="step-item"><div class="step-num">1</div><div class="step-text"><strong>ระบุ Most Critical Point (MCP)</strong> — จุดบนเส้นทางที่ Diversion Time ไปยัง Adequate Airport ยาวที่สุด</div></div>
+      <div class="step-item"><div class="step-num">2</div><div class="step-text"><strong>คำนวณ Diversion Fuel</strong> จาก MCP ไป ETOPS Alternate ด้วย Single Engine + ISA+10 + Adverse Wind</div></div>
+      <div class="step-item"><div class="step-num">3</div><div class="step-text"><strong>เพิ่ม APU Fuel</strong> (ถ้าต้องใช้ APU ระหว่าง Diversion) และ Approach & Landing Fuel</div></div>
+      <div class="step-item"><div class="step-num">4</div><div class="step-text"><strong>เพิ่ม Final Reserve:</strong> 30 นาที Holding ที่ 1,500 ft เหนือ Alternate</div></div>
+      <div class="step-item"><div class="step-num">5</div><div class="step-text"><strong>คำนวณ Fuel ที่คาดว่าจะเหลือ ณ MCP</strong> = Block Fuel − Taxi − Fuel Used to MCP</div></div>
+      <div class="step-item"><div class="step-num">6</div><div class="step-text"><strong>ตรวจสอบ:</strong> หาก Diversion Fuel > Fuel ที่เหลือ ณ MCP → ต้องเพิ่ม Extra Fuel ที่ Departure</div></div>
+    </div>
+
+    <div class="formula">ETOPS Critical Fuel Required = Diversion Fuel at MCP + Final Reserve (30 min)</div>
+
+    <div class="infobox blue">
+      <div class="infobox-header">📐 ตัวอย่าง ETOPS 180 Critical Fuel — BKK–SYD</div>
+      <div class="infobox-body">
+        <p><strong>Aircraft:</strong> B777-300ER ETOPS 180 · <strong>MCP ระหว่าง:</strong> YPPH (Perth) กับ NZCH (Christchurch)</p>
+        <p><strong>สมมติ Single Engine + ISA+10 + Adverse Wind 30 kt Head:</strong></p>
+        <p>• Distance MCP → YPPH (Alternate) = 1,050 NM · Single Engine GS = 420 kt</p>
+        <p>• Diversion Time = 1,050 / 420 = <strong>2.5 ชั่วโมง</strong></p>
+        <p>• Single Engine Fuel Flow = 5,200 kg/hr → Diversion Fuel = 5,200 × 2.5 = <strong>13,000 kg</strong></p>
+        <p>• Final Reserve (30 min Hold) = 5,200 × 0.5 = <strong>2,600 kg</strong></p>
+        <p>• <strong>ETOPS Critical Fuel Required = 13,000 + 2,600 = 15,600 kg</strong></p>
+        <p>• ตรวจ: Fuel ที่คาดว่าเหลือ ณ MCP จาก Flight Plan = 18,200 kg &gt; 15,600 kg ✓ → <strong>Dispatch ได้</strong></p>
+      </div>
+    </div>
+
+    <div class="infobox blue">
+      <div class="infobox-header">✈️ ETOPS Alternate Weather Requirements</div>
+      <div class="infobox-body">
+        <p>• ≥ 1 ชั่วโมงก่อน ETA ถึง Alternate: Weather ≥ Authorized Alternate Minima + Buffer</p>
+        <p>• <strong>ETOPS 120:</strong> Alternate Weather ≥ Precision Approach Minima ของ Alternate นั้น</p>
+        <p>• <strong>ETOPS 180+:</strong> ต้องมี 2 ETOPS Alternates หรือ Airport ที่ Weather แน่นอน</p>
+        <p>• Dispatcher ต้อง Update ETOPS Alternate Weather ทุกครั้งก่อน Dispatch</p>
+        <p>• หาก Alternate Weather เสื่อมลงหลัง Dispatch → ต้อง Coordinate กับ Crew ทันที</p>
+      </div>
+    </div>
+
+    <h3 class="section-h2">7.3 Fuel Monitoring In-Flight (Dispatcher Role)</h3>
+    <p class="prose">แม้กัปตันรับผิดชอบ In-Flight Fuel Management แต่ Dispatcher ยังต้องติดตามตลอดการบิน:</p>
+    <ul class="list-block">
+      <li>รับ Position Report / ACARS Fuel Report ตามช่วงเวลาที่กำหนดใน OPS Manual</li>
+      <li>เปรียบเทียบ Actual Fuel on Board vs. Flight Plan Fuel ณ เวลาและ Position เดียวกัน</li>
+      <li>หาก Fuel ต่ำกว่าแผนอย่างมีนัยสำคัญ → ประเมินสาเหตุ: Headwind เพิ่ม, ATC Rerouting, หรือ Fuel Leak?</li>
+      <li>Coordinate กับ Crew หากต้องพิจารณา Alternate หรือขอ Priority Landing</li>
+      <li>Update Destination และ Alternate Weather แล้วแจ้ง Crew ทันทีเมื่อมีการเปลี่ยนแปลง</li>
+      <li>บันทึก Communication ทุกรายการใน Dispatcher Log ตาม Company Procedure</li>
+    </ul>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     CHAPTER 8 — DISPATCH WORKFLOW
+════════════════════════════════════════════════════ -->
+<section class="chapter-section" id="ch8">
+  <div class="chapter-header">
+    <div class="ch-badge"><span>8</span> Performance Dispatch Workflow</div>
+    <h2 class="ch-title">MEL/CDL · Dispatch Release<br>&amp; Case Study</h2>
+    <p class="ch-desc">บทสุดท้ายนี้รวบรวมทุกอย่างที่เรียนมาเข้าสู่กระบวนการ Dispatch จริง พร้อมกรณีศึกษาการคำนวณ Takeoff Weight ทีละขั้นตอน</p>
+  </div>
+  <div class="chapter-body">
+
+    <h3 class="section-h2">8.1 MEL & CDL Impact on Performance</h3>
+    <p class="prose">Minimum Equipment List (MEL) และ Configuration Deviation List (CDL) มีผลโดยตรงต่อ Performance ที่ Dispatcher ต้องคำนวณใหม่ทุกครั้ง:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>MEL/CDL Item</th><th>ผลต่อ Performance</th><th>Dispatcher Action</th></tr></thead>
+        <tbody>
+          <tr><td>Thrust Reverser Inoperative</td><td>Landing Distance เพิ่มขึ้น</td><td>คำนวณ LDR ใหม่ตาม AFM MEL Supplement</td></tr>
+          <tr><td>Winglet Damaged (CDL)</td><td>Drag เพิ่ม, Range ลด</td><td>ใช้ CDL Drag Penalty ใน Fuel Calculation</td></tr>
+          <tr><td>Anti-Skid Inoperative</td><td>Dry LDR ×1.45 โดยทั่วไป</td><td>Wet Runway อาจ Prohibit — ตรวจ MEL</td></tr>
+          <tr><td>APU Inoperative</td><td>ETOPS Fuel เพิ่มขึ้น</td><td>คำนวณ ETOPS Fuel ใหม่รวม APU-less Scenario</td></tr>
+          <tr><td>Wing Anti-Ice Inop</td><td>T/O Weight ลด (Icing Risk)</td><td>อาจห้าม T/O ใน Known Icing Conditions</td></tr>
+          <tr><td>Flap Asymmetry (1 Panel)</td><td>V-speeds เปลี่ยน</td><td>ดู AFM Supplement สำหรับ V1/VR/V2 ใหม่</td></tr>
+          <tr><td>One Engine Bleed Inop</td><td>Climb Performance ลด</td><td>ตรวจ 2nd Segment Gradient ยังผ่าน Requirement</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="infobox blue">
+      <div class="infobox-header">📋 MEL Performance Check Process</div>
+      <div class="infobox-body">
+        <p><strong>1.</strong> ระบุ MEL Item ที่ Inoperative และหมายเลข MEL Reference</p>
+        <p><strong>2.</strong> เปิด AFM MEL Supplement หรือ MMEL ที่เกี่ยวข้อง</p>
+        <p><strong>3.</strong> ใช้ Performance Correction Factors ที่กำหนดไว้</p>
+        <p><strong>4.</strong> คำนวณ T/O Weight, Landing Weight, และ Fuel ใหม่ทั้งหมด</p>
+        <p><strong>5.</strong> บันทึก MEL Number และ Performance Impact ใน Dispatch Release</p>
+        <p><strong>6.</strong> แจ้ง Crew พร้อม Briefing ที่ชัดเจนว่า Item ใด Inop และ Limitation คืออะไร</p>
+      </div>
+    </div>
+
+    <h3 class="section-h2">8.2 Dispatch Release Requirements</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ส่วน</th><th>ข้อมูลที่ต้องมี</th></tr></thead>
+        <tbody>
+          <tr><td>Aircraft Information</td><td>Registration, Type/Series, MTOW, MLW, MZFW, Current Weight</td></tr>
+          <tr><td>Route & Alternates</td><td>Origin, Destination, En-Route Alternates, ETOPS Info</td></tr>
+          <tr><td>Performance Data</td><td>Allowable TOW, V1/VR/V2, Flap Setting, Runway Used</td></tr>
+          <tr><td>Weight & Balance</td><td>OEW, ZFW, TOW, Landing Weight, CG at T/O and Landing</td></tr>
+          <tr><td>Fuel Data</td><td>Block Fuel Breakdown — ทุก Component ระบุแยกกัน</td></tr>
+          <tr><td>NOTAMs & Restrictions</td><td>Airport, Airspace, Aircraft-specific NOTAMs</td></tr>
+          <tr><td>Weather</td><td>Origin, Destination, Alternate TAF/METAR + Significant En-Route</td></tr>
+          <tr><td>MEL/CDL</td><td>Items Active + Performance Impact + Action Required</td></tr>
+          <tr><td>Signatures</td><td>Dispatcher License No. + Timestamp + Captain Co-Sign</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="section-h2">8.3 กรณีศึกษา: คำนวณ TOW จาก BKK–SIN</h3>
+
+    <div class="scenario-box">
+      <div class="scenario-header">
+        <span>📋 Scenario Data</span>
+      </div>
+      <div class="scenario-body">
+        <div class="sline"><span class="sk">Aircraft:</span><span class="sv">Boeing 737-800</span></div>
+        <div class="sline"><span class="sk">Route:</span><span class="sv">BKK (VTBS) → SIN (WSSS)</span></div>
+        <div class="sline"><span class="sk">Runway:</span><span class="sv">01L · TORA = 3,700m · TODA = 3,900m · ASDA = 3,700m</span></div>
+        <div class="sline"><span class="sk">OAT:</span><span class="sv">+38°C · QNH: 1,008 hPa</span></div>
+        <div class="sline"><span class="sk">Wind:</span><span class="sv">360° / 12 kt (Headwind Component ≈ 12 kt)</span></div>
+        <div class="sline"><span class="sk">OEW:</span><span class="sv">42,100 kg</span></div>
+        <div class="sline"><span class="sk">Traffic Load:</span><span class="sv">15,200 kg (168 pax + baggage + cargo)</span></div>
+        <div class="sline"><span class="sk">Trip Fuel:</span><span class="sv">8,400 kg</span></div>
+        <div class="sline"><span class="sk">Reserve Fuel:</span><span class="sv">2,800 kg (Contingency + Alternate + Final)</span></div>
+        <div class="sline"><span class="sk">Taxi Fuel:</span><span class="sv">350 kg</span></div>
+        <div class="sline"><span class="sk">Aircraft Limits:</span><span class="sv">MTOW 79,016 kg · MLW 66,360 kg · MZFW 61,689 kg</span></div>
+      </div>
+    </div>
+
+    <h3 class="section-h3">ขั้นตอนการคำนวณ</h3>
+    <div class="steps">
+      <div class="step-item"><div class="step-num">1</div><div class="step-text"><strong>คำนวณ ZFW</strong> = OEW + Traffic Load = 42,100 + 15,200 = <strong>57,300 kg</strong><br>ตรวจ: 57,300 ≤ MZFW 61,689 ✓</div></div>
+      <div class="step-item"><div class="step-num">2</div><div class="step-text"><strong>คำนวณ Block Fuel</strong> = Trip + Reserve + Taxi = 8,400 + 2,800 + 350 = <strong>11,550 kg</strong></div></div>
+      <div class="step-item"><div class="step-num">3</div><div class="step-text"><strong>คำนวณ Target TOW</strong> = ZFW + Trip Fuel + Reserve (ไม่รวม Taxi) = 57,300 + 11,200 = <strong>68,500 kg</strong><br>ตรวจ: 68,500 ≤ MTOW 79,016 ✓</div></div>
+      <div class="step-item"><div class="step-num">4</div><div class="step-text"><strong>คำนวณ Pressure Altitude:</strong> QNH 1,008 hPa → ต่ำกว่า Standard 5 hPa → PA ≈ +140 ft</div></div>
+      <div class="step-item"><div class="step-num">5</div><div class="step-text"><strong>คำนวณ Density Altitude:</strong><br>ISA Temp at 140 ft ≈ 14.7°C · OAT = 38°C → ΔISA = +23.3°C<br>DA = 140 + (120 × 23.3) ≈ <strong>2,936 ft</strong></div></div>
+      <div class="step-item"><div class="step-num">6</div><div class="step-text"><strong>ค้นหา Performance Charts:</strong> ใช้ Runway 3,700m + DA ~3,000 ft + HW 12 kt หา Field Length Limited TOW จาก AFM/OPS Data</div></div>
+      <div class="step-item"><div class="step-num">7</div><div class="step-text"><strong>ตรวจ Obstacle Clearance Limit</strong> สำหรับ SID จาก 01L ที่ VTBS — ดู OFP และ Airport Analysis</div></div>
+      <div class="step-item"><div class="step-num">8</div><div class="step-text"><strong>คำนวณ Landing Weight:</strong> LW = TOW − Trip Fuel = 68,500 − 8,400 = <strong>60,100 kg</strong><br>ตรวจ: 60,100 ≤ MLW 66,360 ✓</div></div>
+      <div class="step-item"><div class="step-num">9</div><div class="step-text"><strong>Allowable TOW = min</strong> ของ MSTOW, FLTOW, OCTOW, CLTOW — เลือกค่าที่ต่ำที่สุด</div></div>
+      <div class="step-item"><div class="step-num">10</div><div class="step-text"><strong>ตัดสินใจ:</strong> หาก Target TOW 68,500 ≤ Allowable TOW → <strong>Dispatch ได้</strong><br>หากเกิน → ลด Payload หรือ Extra Fuel แล้วคำนวณใหม่</div></div>
+    </div>
+
+    <h3 class="section-h2">Dispatcher Performance Checklist</h3>
+    <div class="checklist">
+      <div class="cl-item"><div class="cl-box"></div>ISA Deviation คำนวณแล้ว — ΔISA ระบุใน Flight Plan</div>
+      <div class="cl-item"><div class="cl-box"></div>Density Altitude ประเมินแล้ว — ผลกระทบต่อ Performance เข้าใจ</div>
+      <div class="cl-item"><div class="cl-box"></div>Allowable TOW = min ของ MSTOW / FLTOW / OCTOW / CLTOW / TSTOW / BETOW</div>
+      <div class="cl-item"><div class="cl-box"></div>ZFW ≤ MZFW · TOW ≤ MTOW · LW ≤ MLW — ผ่านทุกข้อ</div>
+      <div class="cl-item"><div class="cl-box"></div>CG อยู่ใน Envelope ทั้ง Takeoff CG และ Landing CG</div>
+      <div class="cl-item"><div class="cl-box"></div>Fuel ครบทุก Component — Trip/Contingency/Alternate/Final Reserve/Additional/Taxi</div>
+      <div class="cl-item"><div class="cl-box"></div>ETOPS Fuel (ถ้าใช้) — Critical Fuel Scenario คำนวณแล้ว</div>
+      <div class="cl-item"><div class="cl-box"></div>MEL/CDL Items ตรวจแล้ว — Performance Impact บันทึกใน Release</div>
+      <div class="cl-item"><div class="cl-box"></div>Runway Condition ล่าสุด — RCR/SNOWTAM/ATIS ตรวจแล้ว</div>
+      <div class="cl-item"><div class="cl-box"></div>Alternate Weather Valid ≥ Dispatch Requirements ที่ ETA ± 1 ชั่วโมง</div>
+      <div class="cl-item"><div class="cl-box"></div>NOTAMs ตรวจแล้ว — Origin / Destination / Alternate / En-Route / Aircraft</div>
+      <div class="cl-item"><div class="cl-box"></div>Dispatch Release Sign ครบ — Dispatcher License + Captain Co-Sign + Timestamp</div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     CHAPTER 9 — FLEX / ASSUMED TEMPERATURE TAKEOFF
+════════════════════════════════════════════════════ -->
+<section class="chapter-section" id="ch9">
+  <div class="chapter-header">
+    <div class="ch-badge"><span>9</span> Flex / Assumed Temperature Takeoff</div>
+    <h2 class="ch-title">Reduced Thrust Takeoff<br>& Derated Thrust</h2>
+    <p class="ch-desc">ทุกสายการบินพาณิชย์ใช้ Flex หรือ Assumed Temperature Takeoff ในชีวิตประจำวัน เพื่อยืดอายุ Engine และลด Maintenance Cost โดยไม่กระทบ Safety — Dispatcher ต้องเข้าใจหลักการและเงื่อนไขที่อนุญาต</p>
+  </div>
+  <div class="chapter-body">
+
+    <h3 class="section-h2">9.1 หลักการ Flex / Assumed Temperature Takeoff</h3>
+    <p class="prose">ในสถานการณ์ที่ Runway ยาวเพียงพอและน้ำหนักไม่ถึง Structural Limit อากาศยานมี <strong>Performance Margin</strong> เหลืออยู่ Flex Takeoff ใช้ประโยชน์จาก Margin นั้นโดยบอก FMS ว่า "อุณหภูมิสูงกว่าจริง" ทำให้ Engine ลด Thrust ลงตามสมการ Thrust vs Temperature:</p>
+    <div class="formula">หลักการ: Engine Thrust ∝ 1/T (Temperature ↑ → Thrust ↓)
+
+Flex Temp = อุณหภูมิสมมติที่สูงกว่า OAT จริง
+→ FMS คำนวณ Thrust ต่ำกว่า Maximum Takeoff Thrust (TOGA)
+→ Engine ทำงานเบาลง → อายุการใช้งานยาวนานขึ้น
+
+กฎ: Allowable TOW ที่ Flex Temp ≥ Actual TOW
+    Flex Temp ≤ Maximum Flex Temp (โดยทั่วไป ISA+53°C หรือ 60–75°C)</div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">💰</div>
+        <div class="card-title">ประโยชน์หลัก</div>
+        <div class="card-body">Engine Life เพิ่มขึ้น · EGT ต่ำลง · Overhaul Cost ลดลง · Noise ลดลง</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚠️</div>
+        <div class="card-title">ข้อจำกัด</div>
+        <div class="card-body">Flex Temp ≤ Max Flex Temp · Runway ต้อง Dry · ไม่มี Anti-Skid Inop · ไม่มี Wind Shear</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔄</div>
+        <div class="card-title">Override ได้ทันที</div>
+        <div class="card-body">กด TOGA ได้ตลอดเวลาก่อน V1 หาก Engine Issue หรือ Obstacle ไม่คาดคิด</div>
+      </div>
+    </div>
+
+    <h3 class="section-h2">9.2 Flex vs Derated Thrust — ต่างกันอย่างไร</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ประเภท</th><th>วิธีการ</th><th>Override ได้ไหม</th><th>V-speeds</th><th>Manufacturer</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Flex / Assumed Temp</strong></td><td>หลอก FMS ว่า OAT สูงกว่าจริง</td><td>✅ กด TOGA ได้ทันที</td><td>ใช้ V-speeds ของ Flex Thrust</td><td>Airbus (Flex), Boeing (Assumed Temp)</td></tr>
+          <tr><td><strong>Derate (D-TO1/D-TO2)</strong></td><td>ลด Certified Thrust Rating จริง</td><td>⚠️ ไม่สามารถ Override ได้ในทันที</td><td>ต้องใช้ V-speeds ของ Derate นั้น</td><td>Boeing (Derated Climb)</td></tr>
+          <tr><td><strong>TOGA (Full Thrust)</strong></td><td>Maximum Certified Takeoff Thrust</td><td>N/A</td><td>ใช้ V-speeds ของ Full Thrust</td><td>ทุก Type</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="section-h2">9.3 เงื่อนไขที่ห้ามใช้ Flex Takeoff</h3>
+    <div class="infobox red">
+      <div class="infobox-header">⚠️ Conditions ที่ต้องใช้ TOGA (Full Thrust) เท่านั้น</div>
+      <div class="infobox-body">
+        <p>• <strong>Contaminated Runway</strong> — RCC ≤ 5 (Wet &gt;3mm, Snow, Ice) ห้ามใช้ Flex</p>
+        <p>• <strong>Wind Shear Warning</strong> — SIGMET, PIREP, หรือ Onboard Alert แจ้ง Wind Shear ที่ Departure Airport</p>
+        <p>• <strong>Anti-Skid Inoperative</strong> — MEL Item ที่มีผลต่อ Takeoff Distance</p>
+        <p>• <strong>OAT ≥ Flex Temp</strong> — อุณหภูมิจริงสูงกว่าหรือเท่ากับ Flex Temp ที่คำนวณไว้</p>
+        <p>• <strong>Company Policy</strong> — บางสายการบินกำหนดเงื่อนไขเพิ่มเติม เช่น ห้ามที่ Elevation สูง</p>
+        <p>• <strong>Specific MEL Items</strong> — บาง MEL กำหนดให้ต้องใช้ Full Thrust — ดู Dispatch Conditions</p>
+      </div>
+    </div>
+
+    <h3 class="section-h2">9.4 Dispatcher Responsibility สำหรับ Flex Takeoff</h3>
+    <ul class="list-block">
+      <li>ตรวจว่า Runway Condition เป็น Dry (RCC 6) — Flex ส่วนใหญ่อนุญาตเฉพาะ Dry Runway</li>
+      <li>ตรวจ Flex Temp ที่ใช้ ≤ Maximum Flex Temp ของ Aircraft Type นั้น (ดู AFM)</li>
+      <li>ตรวจว่า Flex Temp &gt; OAT จริง (ถ้า Flex Temp ≤ OAT → ใช้ TOGA)</li>
+      <li>ตรวจ MEL Items ว่าไม่มีรายการที่กำหนดให้ใช้ Full Thrust</li>
+      <li>บันทึก Flex Temp และ Runway ที่ใช้ใน Dispatch Release อย่างชัดเจน</li>
+      <li>หาก Weather Report แจ้ง Wind Shear หรือ Microburst → แจ้ง Crew ให้ใช้ TOGA</li>
+    </ul>
+
+    <div class="infobox blue">
+      <div class="infobox-header">📐 ตัวอย่าง Flex Takeoff Calculation</div>
+      <div class="infobox-body">
+        <p><strong>B737-800 · BKK · Runway 01L (3,700m Dry) · OAT = 32°C · TOW = 65,000 kg</strong></p>
+        <p>• Max TOGA TOW at 32°C = 72,000 kg (Field Limited)</p>
+        <p>• หา Flex Temp: TOW 65,000 kg Allowable ที่ OAT เท่าใด → จาก Chart: ≈ 52°C</p>
+        <p>• ตรวจ: 52°C ≤ Max Flex Temp (60°C) ✓ · 52°C &gt; OAT 32°C ✓</p>
+        <p>• <strong>Result: ใช้ Flex Temp 52°C</strong> → Engine ทำงานที่ ~88% Thrust แทน 100%</p>
+        <p>• V-speeds คำนวณใหม่จาก Flex Thrust ที่ TOW 65,000 kg</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     CHAPTER 10 — PNR / PET & CRITICAL NAVIGATION POINTS
+════════════════════════════════════════════════════ -->
+<section class="chapter-section" id="ch10">
+  <div class="chapter-header">
+    <div class="ch-badge"><span>10</span> PNR · PET & Critical Navigation Points</div>
+    <h2 class="ch-title">Point of No Return<br>&amp; Equal Time Point</h2>
+    <p class="ch-desc">สำหรับ Long-haul Flights โดยเฉพาะ Oceanic และ Polar Routes Dispatcher ต้องกำหนด Critical Navigation Points เหล่านี้ไว้ใน Flight Plan เพื่อให้กัปตันมีข้อมูลสำหรับตัดสินใจ Continue หรือ Divert</p>
+  </div>
+  <div class="chapter-body">
+
+    <h3 class="section-h2">10.1 Point of Equal Time (PET) / Equal Time Point (ETP)</h3>
+    <p class="prose">PET คือจุดบนเส้นทางบินที่เวลาบินไปยังสนามบิน A (ข้างหน้า) เท่ากับเวลาบินกลับไปยังสนามบิน B (ข้างหลัง) โดยพิจารณา Wind ด้วย — ใช้ตัดสินใจเมื่อเกิด Emergency ว่าควรไปต่อหรือกลับ:</p>
+    <div class="formula">PET Distance from A (D_A):
+
+D_A = (D × GS_H) / (GS_H + GS_O)
+
+D   = Total Distance A to B
+GS_H = Ground Speed Home (กลับไป A)
+GS_O = Ground Speed Onward (ต่อไป B)
+
+เวลาถึง PET จาก A = D_A / GS_O
+เวลาจาก PET ถึง B = (D − D_A) / GS_O</div>
+
+    <div class="infobox blue">
+      <div class="infobox-header">📐 ตัวอย่าง PET Calculation</div>
+      <div class="infobox-body">
+        <p><strong>Route: BKK → SYD (Total Distance = 4,800 NM)</strong></p>
+        <p>• GS Onward (BKK→SYD direction) = 480 kt (Tailwind)</p>
+        <p>• GS Home (กลับ BKK) = 420 kt (Headwind เมื่อกลับ)</p>
+        <p>• D_PET from BKK = (4,800 × 420) / (480 + 420) = 2,016,000 / 900 = <strong>2,240 NM</strong></p>
+        <p>• เวลาจาก BKK ถึง PET = 2,240 / 480 = <strong>4 hr 40 min</strong></p>
+        <p>• เวลาจาก PET กลับ BKK = 2,240 / 420 = <strong>5 hr 20 min</strong> (นานกว่าเพราะ Headwind)</p>
+        <p>→ หาก Emergency เกิดหลัง PET → ไปต่อ SYD เร็วกว่า</p>
+      </div>
+    </div>
+
+    <h3 class="section-h3">Multi-PET สำหรับ ETOPS</h3>
+    <p class="prose">บน ETOPS Route อาจมี PET หลายจุดระหว่าง ETOPS Alternates ต่างๆ Dispatcher ต้องคำนวณ PET แยกระหว่างแต่ละคู่ Alternate และระบุทั้งหมดใน OFP:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>PET Type</th><th>คำนวณระหว่าง</th><th>ใช้สำหรับ</th></tr></thead>
+        <tbody>
+          <tr><td>Single Engine PET</td><td>ETOPS Alternate A ↔ B</td><td>Engine Failure Diversion Decision</td></tr>
+          <tr><td>All Engine PET</td><td>Origin ↔ Destination</td><td>Depressurization หรือ Medical Emergency</td></tr>
+          <tr><td>ETOPS Critical PET</td><td>Between All Adjacent Alternates</td><td>ETOPS Dispatch Compliance</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="section-h2">10.2 Point of No Return (PNR) / Point of Safe Return (PSR)</h3>
+    <p class="prose">PNR คือจุดไกลสุดที่อากาศยานยังสามารถบินกลับ Origin ได้โดยมี Fuel เพียงพอ (รวม Reserve) หากเดินทางเกิน PNR แล้วเกิดปัญหา จะ <strong>ไม่สามารถกลับ Origin ได้</strong>:</p>
+    <div class="formula">PNR Distance from Origin (D_PNR):
+
+D_PNR = (Fuel Available × GS_O × GS_H) / (GS_O + GS_H) × (1 / Fuel Flow)
+
+หรือในรูปแบบเวลา:
+t_PNR = (Endurance × GS_H) / (GS_O + GS_H)
+
+Endurance = (Usable Fuel − Reserve) / Fuel Flow per hour</div>
+
+    <div class="infobox gold">
+      <div class="infobox-header">📌 PNR ใช้งานเมื่อไร</div>
+      <div class="infobox-body">
+        <p>• Ferry Flights ที่ไม่มี Alternate ที่ปลายทาง — กำหนด PNR ก่อน Departure</p>
+        <p>• Island Hopping หรือ Remote Destination — ต้องรู้ว่า "หัวกลับกลับยังทัน"</p>
+        <p>• Medical Emergency บน Oceanic Route — ตัดสินใจก่อน PNR เพื่อกลับ Origin ได้</p>
+        <p>• Dispatcher ระบุ PNR ใน OFP พร้อม Time และ Position (Lat/Long หรือ FIX)</p>
+      </div>
+    </div>
+
+    <h3 class="section-h2">10.3 Critical Fuel Point (CFP) — ETOPS</h3>
+    <p class="prose">บน ETOPS Route Critical Fuel Point คือจุดที่ Fuel Remaining จะพอดีกับ Diversion Fuel + Reserve ถ้าเกินจุดนี้แล้ว Fuel จะน้อยกว่าที่ต้องการสำหรับ Diversion ที่เลวร้ายที่สุด:</p>
+    <ul class="list-block">
+      <li>Dispatcher คำนวณ CFP สำหรับ Scenario: Engine Failure + Worst Wind + ISA+10 + APU On</li>
+      <li>CFP ต้องระบุใน OFP พร้อม Expected Fuel Remaining ณ จุดนั้น</li>
+      <li>In-Flight: ถ้า Actual Fuel ณ CFP น้อยกว่า Required → Crew ต้อง Divert ทันที</li>
+      <li>หาก Fuel เกิน CFP Requirement → สามารถ Continue ต่อได้</li>
+    </ul>
+
+    <div class="infobox blue">
+      <div class="infobox-header">📊 สรุปความสัมพันธ์ PET · PNR · CFP</div>
+      <div class="infobox-body">
+        <p>• <strong>PET:</strong> "ไปต่อ vs กลับ — อันไหนเร็วกว่า?" → ใช้เมื่อ Emergency เกิด</p>
+        <p>• <strong>PNR:</strong> "จุดไกลสุดที่ยังกลับ Origin ได้" → ใช้วางแผน Fuel Go/No-Go</p>
+        <p>• <strong>CFP:</strong> "จุดที่ต้อง Divert ทันทีถ้า Fuel ต่ำกว่า Threshold" → ETOPS Compliance</p>
+        <p>Dispatcher ใส่ทั้ง 3 จุดใน OFP แต่ใช้คนละวัตถุประสงค์</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     CHAPTER 11 — EMERGENCY PERFORMANCE & ABNORMALS
+════════════════════════════════════════════════════ -->
+<section class="chapter-section" id="ch11">
+  <div class="chapter-header">
+    <div class="ch-badge"><span>11</span> Emergency Performance & Abnormals</div>
+    <h2 class="ch-title">Depressurization · Emergency Descent<br>&amp; Overweight Landing</h2>
+    <p class="ch-desc">Dispatcher ต้องเข้าใจ Performance ในสถานการณ์ฉุกเฉิน เพื่อสนับสนุนกัปตันได้อย่างถูกต้องและรวดเร็ว ทั้งการวางแผนล่วงหน้าและการตอบสนองขณะเกิดเหตุ</p>
+  </div>
+  <div class="chapter-body">
+
+    <h3 class="section-h2">11.1 Cabin Depressurization & Emergency Descent</h3>
+    <p class="prose">เมื่อเกิด Cabin Depressurization ที่ High Altitude กัปตันต้องทำ Emergency Descent ลงมาที่ระดับที่ปลอดภัยสำหรับการหายใจโดยไม่ใช้ Oxygen (โดยทั่วไป 10,000 ft หรือ MEA ของเส้นทาง) Dispatcher ต้องเตรียม Alternative Route และ Alternate Airports ไว้ล่วงหน้า:</p>
+    <div class="formula">Time of Useful Consciousness (TUC) ที่ระดับต่างๆ:
+
+FL250 (25,000 ft) → TUC ≈ 3–5 นาที
+FL300 (30,000 ft) → TUC ≈ 1–2 นาที
+FL350 (35,000 ft) → TUC ≈ 30–60 วินาที
+FL400 (40,000 ft) → TUC ≈ 15–20 วินาที
+
+Emergency Descent Rate: 4,000–6,000 ft/min (VMO/MMO)
+เวลาจาก FL350 ถึง 10,000 ft ≈ 6–7 นาที</div>
+
+    <div class="infobox red">
+      <div class="infobox-header">⚠️ Dispatcher ต้องเตรียมอะไรสำหรับ Depressurization?</div>
+      <div class="infobox-body">
+        <p>• <strong>Emergency Descent Altitude:</strong> กำหนด Safe Altitude ตลอดเส้นทาง (MEA, MORA, Grid MORA)</p>
+        <p>• <strong>Diversion Airport:</strong> ระบุ Suitable Airport ทุก 60 NM ตลอดเส้นทาง (โดยเฉพาะ Oceanic/Remote)</p>
+        <p>• <strong>Oxygen Endurance:</strong> Crew Oxygen ต้องเพียงพอสำหรับ Descent + Flight to Alternate ที่ 10,000 ft</p>
+        <p>• <strong>Fuel Impact:</strong> บินที่ Low Altitude → Fuel Burn เพิ่ม 20–40% → ตรวจว่า Fuel ถึง Alternate</p>
+        <p>• <strong>Route Change:</strong> Emergency Descent บน Oceanic อาจต้องขอ ATC Special Clearance — Dispatcher Coordinate</p>
+      </div>
+    </div>
+
+    <h3 class="section-h2">11.2 Overweight Landing</h3>
+    <p class="prose">โดยปกติ LW ≤ MLW เสมอ แต่ในกรณี Emergency อาจจำเป็นต้อง Land เกิน MLW ซึ่งต้องมีขั้นตอนที่ชัดเจน:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>กรณี</th><th>Landing &gt; MLW?</th><th>ขั้นตอน</th></tr></thead>
+        <tbody>
+          <tr><td>Medical Emergency</td><td>อนุญาต (Emergency)</td><td>Declare Emergency · Land Immediately · Post-flight Inspection Required</td></tr>
+          <tr><td>Fire On Board</td><td>อนุญาต (Emergency)</td><td>Dump Fuel ถ้าทำได้ · หรือ Land Overweight ทันที</td></tr>
+          <tr><td>Engine Failure</td><td>พิจารณาตาม Fuel Remaining</td><td>Hold Burn Fuel ถ้าทำได้ · Emergency ถ้าจำเป็น</td></tr>
+          <tr><td>ไม่มี Emergency</td><td>ห้าม</td><td>Hold เพื่อ Burn Fuel หรือ Dump Fuel (ถ้ามี System)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="infobox gold">
+      <div class="infobox-header">📋 Post-Overweight Landing — Inspection Required</div>
+      <div class="infobox-body">
+        <p>หลัง Overweight Landing ต้องทำ <strong>Overweight Landing Inspection</strong> ตาม AMM (Aircraft Maintenance Manual) ก่อน Next Flight เสมอ เพราะโครงสร้างอาจได้รับ Stress เกิน Design Limit:</p>
+        <p>• ตรวจ Landing Gear Structure, Wing Attach Fittings, Fuselage Lower Skin</p>
+        <p>• บันทึก Actual Landing Weight และ Landing Rate (ถ้าทำได้จาก FDR)</p>
+        <p>• Dispatcher ต้องแจ้ง Maintenance Control ทันทีหลังทราบเหตุ</p>
+      </div>
+    </div>
+
+    <h3 class="section-h2">11.3 Fuel Dumping (Jettisoning)</h3>
+    <p class="prose">บางอากาศยานมีระบบ Fuel Dump เพื่อลดน้ำหนักก่อน Emergency Landing — ไม่ใช่ทุก Type มีระบบนี้:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Aircraft</th><th>Fuel Dump System</th><th>หมายเหตุ</th></tr></thead>
+        <tbody>
+          <tr><td>Boeing 747, 777, 787</td><td>✅ มีระบบ</td><td>Dump Rate ~2,000–3,000 kg/min</td></tr>
+          <tr><td>Boeing 737</td><td>❌ ไม่มี</td><td>MLW ≈ 97% MTOW — Gap เล็กน้อย</td></tr>
+          <tr><td>Airbus A320 Family</td><td>❌ ไม่มี</td><td>ต้อง Hold เพื่อ Burn Fuel</td></tr>
+          <tr><td>Airbus A330, A340, A380</td><td>✅ มีระบบ</td><td>ตรวจ AFM สำหรับ Procedure</td></tr>
+          <tr><td>Airbus A350</td><td>✅ มีระบบ</td><td>Dump ผ่าน Wing Trailing Edge</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="section-h2">11.4 Engine Failure After V1 — Dispatcher Perspective</h3>
+    <p class="prose">หาก Engine Failure เกิดหลัง V1 กัปตันต้องบินต่อ — แต่ Dispatcher มีบทบาทสำคัญในการสนับสนุน:</p>
+    <ul class="list-block">
+      <li><strong>Pre-dispatch:</strong> ตรวจว่า 2nd Segment Gradient ผ่าน ≥ 2.4% ภายใต้สภาพอากาศจริง</li>
+      <li><strong>Pre-dispatch:</strong> ตรวจ Obstacle Clearance ตลอด Net Takeoff Flight Path</li>
+      <li><strong>Pre-dispatch:</strong> ตรวจ Drift Down Route หาก Engine Fail ระหว่างบิน</li>
+      <li><strong>In-flight:</strong> รับ ACARS แจ้ง Engine Issue → เตรียม Diversion Airport, NOTAM, Weather</li>
+      <li><strong>In-flight:</strong> ประเมิน Single Engine Landing Performance ที่ Alternate ที่วางแผนจะลง</li>
+      <li><strong>In-flight:</strong> Coordinate กับ Maintenance Control สำหรับ AOG Situation</li>
+    </ul>
+
+    <div class="infobox green">
+      <div class="infobox-header">✅ Emergency Performance — Dispatcher Checklist</div>
+      <div class="infobox-body">
+        <p>• <strong>Depressurization:</strong> Safe Altitude Along Route, Diversion Airport, O₂ Endurance, Low-Alt Fuel Check</p>
+        <p>• <strong>Overweight Landing:</strong> Confirm Emergency, Advise Maintenance, Arrange Inspection Before Next Flt</p>
+        <p>• <strong>Engine Failure:</strong> Single-Engine Performance at Diversion, Runway Length, Landing Weight</p>
+        <p>• <strong>Fuel Emergency:</strong> Mayday Fuel Declaration Criteria (≤ Final Reserve), ATC Priority</p>
+        <p>• <strong>All Emergencies:</strong> Document Everything, Notify Operations Control, Support Crew Without Distraction</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     GLOSSARY
+════════════════════════════════════════════════════ -->
+<section class="chapter-section" id="glossary">
+  <div class="chapter-header">
+    <div class="ch-badge" style="color:var(--teal)"><span style="background:var(--teal)">G</span> Glossary & Abbreviations</div>
+    <h2 class="ch-title">คำศัพท์และ<br>คำย่อสำคัญ</h2>
+    <p class="ch-desc">รวบรวมคำย่อและคำศัพท์ทั้งหมดที่ใช้ในหนังสือเล่มนี้ เรียงตามตัวอักษร สำหรับอ้างอิงอย่างรวดเร็ว</p>
+  </div>
+  <div class="chapter-body">
+    <div class="glossary-grid">
+      <div class="gloss-item"><div class="gloss-abbr">AFM</div><div class="gloss-full">Airplane Flight Manual</div><div class="gloss-def">คู่มือการบินที่ Certified โดย Aviation Authority</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">AGL</div><div class="gloss-full">Above Ground Level</div><div class="gloss-def">ความสูงเหนือพื้นดิน</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">ASDA</div><div class="gloss-full">Accelerate-Stop Distance Available</div><div class="gloss-def">ระยะหยุดฉุกเฉินที่มีรวม Stopway</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">CDL</div><div class="gloss-full">Configuration Deviation List</div><div class="gloss-def">รายการความเบี่ยงเบนโครงสร้างที่ Approved</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">CG</div><div class="gloss-full">Center of Gravity</div><div class="gloss-def">จุดศูนย์ถ่วงของอากาศยาน</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">CI</div><div class="gloss-full">Cost Index</div><div class="gloss-def">ดัชนีต้นทุนสำหรับ FMS Speed Optimization</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">DA</div><div class="gloss-full">Density Altitude</div><div class="gloss-def">ความสูงอ้างอิงตามความหนาแน่นอากาศจริง</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">ETOPS</div><div class="gloss-full">Extended Twin Operations</div><div class="gloss-def">การบิน Twin Engine บนเส้นทางไกลจาก Airport</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">FAR</div><div class="gloss-full">Federal Aviation Regulations</div><div class="gloss-def">กฎข้อบังคับการบินของสหรัฐอเมริกา</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">FL</div><div class="gloss-full">Flight Level</div><div class="gloss-def">ระดับบิน อ้างอิงจาก 1013.25 hPa</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">ISA</div><div class="gloss-full">International Standard Atmosphere</div><div class="gloss-def">บรรยากาศมาตรฐานสากลของ ICAO</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">L/D</div><div class="gloss-full">Lift-to-Drag Ratio</div><div class="gloss-def">อัตราส่วนแรงยกต่อแรงต้าน ตัวชี้วัดประสิทธิภาพ</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">LDA</div><div class="gloss-full">Landing Distance Available</div><div class="gloss-def">ระยะ Runway ที่ใช้ Landing ได้จริง</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">LW</div><div class="gloss-full">Landing Weight</div><div class="gloss-def">น้ำหนักอากาศยาน ณ เวลา Landing</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">MAC</div><div class="gloss-full">Mean Aerodynamic Chord</div><div class="gloss-def">ความยาวปีกอ้างอิงสำหรับคำนวณ CG %MAC</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">MEL</div><div class="gloss-full">Minimum Equipment List</div><div class="gloss-def">รายการอุปกรณ์ขั้นต่ำที่ต้องทำงาน</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">MLW</div><div class="gloss-full">Maximum Landing Weight</div><div class="gloss-def">น้ำหนัก Landing สูงสุดที่ Certified</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">MMO</div><div class="gloss-full">Maximum Mach Operating</div><div class="gloss-def">Mach Number สูงสุดที่ใช้งานได้</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">MORA</div><div class="gloss-full">Minimum Off-Route Altitude</div><div class="gloss-def">ระดับบินต่ำสุดที่ปลอดภัยนอกเส้นทาง</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">MSL</div><div class="gloss-full">Mean Sea Level</div><div class="gloss-def">ระดับน้ำทะเลเฉลี่ย — ฐานอ้างอิงความสูง</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">MTOW</div><div class="gloss-full">Maximum Takeoff Weight</div><div class="gloss-def">น้ำหนัก Takeoff สูงสุดที่ Certified</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">MZFW</div><div class="gloss-full">Maximum Zero Fuel Weight</div><div class="gloss-def">น้ำหนักสูงสุดโดยไม่นับ Usable Fuel</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">OAT</div><div class="gloss-full">Outside Air Temperature</div><div class="gloss-def">อุณหภูมิอากาศภายนอกอากาศยาน</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">OEW</div><div class="gloss-full">Operating Empty Weight</div><div class="gloss-def">น้ำหนักเปล่าพร้อมปฏิบัติการ</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">PA</div><div class="gloss-full">Pressure Altitude</div><div class="gloss-def">ความสูงวัดจาก Standard Pressure 1013.25 hPa</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">RCAM</div><div class="gloss-full">Runway Condition Assessment Matrix</div><div class="gloss-def">เมทริกซ์ประเมิน Runway Condition Code (RCC 0-6)</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">ROC</div><div class="gloss-full">Rate of Climb</div><div class="gloss-def">อัตราการไต่ระดับ หน่วย ft/min</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">SAR</div><div class="gloss-full">Specific Air Range</div><div class="gloss-def">NM ต่อ kg Fuel — ตัวชี้วัดประสิทธิภาพ Cruise</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">TAS</div><div class="gloss-full">True Airspeed</div><div class="gloss-def">ความเร็วอากาศจริง (ต่างจาก IAS ตาม Density)</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">TODA</div><div class="gloss-full">Takeoff Distance Available</div><div class="gloss-def">TORA + Clearway — ระยะ Takeoff รวม</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">TORA</div><div class="gloss-full">Takeoff Run Available</div><div class="gloss-def">ความยาว Runway ที่ใช้ Takeoff Run ได้</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">TOW</div><div class="gloss-full">Takeoff Weight</div><div class="gloss-def">น้ำหนักอากาศยาน ณ เวลา Takeoff</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">V1</div><div class="gloss-full">Takeoff Decision Speed</div><div class="gloss-def">ความเร็วตัดสินใจ: หยุด (ก่อน) หรือบินต่อ (หลัง)</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">VR</div><div class="gloss-full">Rotation Speed</div><div class="gloss-def">ความเร็วที่เริ่ม Pull ให้หัวเครื่องบินยกขึ้น</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">V2</div><div class="gloss-full">Takeoff Safety Speed</div><div class="gloss-def">ความเร็วปลอดภัยขั้นต่ำ ณ Screen Height 35 ft</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">VREF</div><div class="gloss-full">Reference Landing Speed</div><div class="gloss-def">Target Speed บน Final Approach ≈ 1.3 × VS0</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">ZFW</div><div class="gloss-full">Zero Fuel Weight</div><div class="gloss-def">OEW + Traffic Load ไม่รวม Usable Fuel</div></div>
+      <div class="gloss-item"><div class="gloss-abbr">ΔISA</div><div class="gloss-full">ISA Deviation</div><div class="gloss-def">ผลต่างระหว่าง OAT กับ ISA Temp ที่ระดับนั้น</div></div>
+    </div>
+  </div>
+</section>
+
+</div><!-- end #main -->
+
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+
+<footer>
+  <p><strong>Aircraft Performance for Flight Dispatchers</strong><br>
+  สำหรับการศึกษาและฝึกอบรมเท่านั้น — For Training Purposes Only · Not for Operational Use<br>
+  อ้างอิง: ICAO Annex 6 · FAR Part 121 · CS-25 · ICAO Doc 8168 · Edition 2025</p>
+</footer>
+
+<script>
+// ── PWA: Register Service Worker ──────────────────────────
+const SW_SRC = `
+const CACHE = 'fdperf-v2';
+const URLS  = [self.location.pathname.replace(/\/sw\.js$/, '') || '/'];
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE)
+      .then(c => c.addAll(URLS))
+      .then(() => self.skipWaiting())
+  );
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys()
+      .then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
+  );
+});
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+  e.respondWith(
+    caches.match(e.request).then(r => r || fetch(e.request).then(res => {
+      const clone = res.clone();
+      caches.open(CACHE).then(c => c.put(e.request, clone));
+      return res;
+    }))
+  );
+});
+`;
+if ('serviceWorker' in navigator) {
+  const blob = new Blob([SW_SRC], {type:'text/javascript'});
+  const url  = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(url).catch(()=>{});
+}
+
+// ── Splash Screen ──────────────────────────────────────────
+window.addEventListener('load', () => {
+  document.body.classList.add('has-bottom-nav');
+  document.body.style.transition = 'opacity .3s';
+  document.body.style.opacity = '1';
+  setTimeout(() => {
+    const s = document.getElementById('splash');
+    if (s) s.classList.add('hidden');
+  }, 1600);
+});
+document.body.style.opacity = '0';
+
+// ── PWA Install Banner ─────────────────────────────────────
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  setTimeout(() => {
+    document.getElementById('installBanner').classList.add('show');
+  }, 4000);
+});
+document.getElementById('installBtn')?.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById('installBanner').classList.remove('show');
+});
+window.addEventListener('appinstalled', () => {
+  document.getElementById('installBanner').classList.remove('show');
+  deferredPrompt = null;
+});
+
+// ── Navigation ─────────────────────────────────────────────
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const offset = id === 'hero' ? 0 : 62;
+  window.scrollTo({ top: el.offsetTop - offset, behavior: 'smooth' });
+}
+
+// ── Hamburger (top nav mobile fallback) ───────────────────
+function toggleMenu() {
+  const menu = document.getElementById('mobileMenu');
+  const l1 = document.getElementById('mbLine1');
+  const l2 = document.getElementById('mbLine2');
+  const l3 = document.getElementById('mbLine3');
+  const open = menu.style.display === 'grid';
+  menu.style.display = open ? 'none' : 'grid';
+  l1.style.transform = open ? '' : 'translateY(7px) rotate(45deg)';
+  l2.style.opacity   = open ? '1' : '0';
+  l3.style.transform = open ? '' : 'translateY(-7px) rotate(-45deg)';
+}
+function mobGo(id) {
+  document.getElementById('mobileMenu').style.display = 'none';
+  const l1 = document.getElementById('mbLine1');
+  const l2 = document.getElementById('mbLine2');
+  const l3 = document.getElementById('mbLine3');
+  l1.style.transform=''; l2.style.opacity='1'; l3.style.transform='';
+  setTimeout(() => scrollToSection(id), 50);
+}
+
+// ── Bottom Nav ─────────────────────────────────────────────
+function bnavClick(tab) {
+  ['home','chapters','search','glossary'].forEach(t => {
+    document.getElementById('bnav'+t.charAt(0).toUpperCase()+t.slice(1))?.classList.remove('active');
+  });
+  document.getElementById('bnav'+tab.charAt(0).toUpperCase()+tab.slice(1))?.classList.add('active');
+  if (tab === 'home')     { scrollToSection('hero'); }
+  else if (tab === 'chapters')  { openDrawer(); }
+  else if (tab === 'search')    { openSearch(); }
+  else if (tab === 'glossary')  { scrollToSection('glossary'); }
+}
+
+// ── Chapter Drawer ─────────────────────────────────────────
+function openDrawer() {
+  document.getElementById('chapterDrawer').classList.add('open');
+  document.getElementById('drawerOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeDrawer() {
+  document.getElementById('chapterDrawer').classList.remove('open');
+  document.getElementById('drawerOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+function drawerGo(id) {
+  closeDrawer();
+  setTimeout(() => scrollToSection(id), 120);
+}
+
+// ── Search ─────────────────────────────────────────────────
+const searchIndex = [];
+function buildSearchIndex() {
+  const sections = document.querySelectorAll('.chapter-section');
+  sections.forEach(sec => {
+    const chBadge = sec.querySelector('.ch-badge');
+    const chTitle = sec.querySelector('.ch-title');
+    const chName  = chBadge ? chBadge.innerText.trim() : '';
+    const headers = sec.querySelectorAll('.section-h2, .section-h3');
+    headers.forEach(h => {
+      const prose = h.nextElementSibling;
+      const snippet = prose && prose.classList.contains('prose') ? prose.innerText.slice(0,120) : '';
+      searchIndex.push({
+        id:      sec.id,
+        chapter: chName,
+        title:   h.innerText.trim(),
+        snippet: snippet,
+        text:    (h.innerText + ' ' + snippet).toLowerCase(),
+      });
+    });
+    // infoboxes and formulas
+    sec.querySelectorAll('.infobox-header').forEach(ih => {
+      searchIndex.push({
+        id: sec.id, chapter: chName,
+        title: ih.innerText.trim(),
+        snippet: ih.nextElementSibling?.innerText.slice(0,100) || '',
+        text: ih.innerText.toLowerCase(),
+      });
+    });
+  });
+}
+
+function openSearch() {
+  if (searchIndex.length === 0) buildSearchIndex();
+  document.getElementById('searchOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('searchInput').focus(), 100);
+  document.body.style.overflow = 'hidden';
+}
+function closeSearch() {
+  document.getElementById('searchOverlay').classList.remove('open');
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchResults').innerHTML = '<div class="search-empty">🔍<br>พิมพ์คำที่ต้องการค้นหา</div>';
+  document.body.style.overflow = '';
+  // reset bnav
+  ['home','chapters','search','glossary'].forEach(t => {
+    document.getElementById('bnav'+t.charAt(0).toUpperCase()+t.slice(1))?.classList.remove('active');
+  });
+  document.getElementById('bnavHome').classList.add('active');
+}
+
+document.getElementById('searchInput')?.addEventListener('input', function() {
+  const q = this.value.trim().toLowerCase();
+  const results = document.getElementById('searchResults');
+  if (!q) { results.innerHTML = '<div class="search-empty">🔍<br>พิมพ์คำที่ต้องการค้นหา</div>'; return; }
+  const hits = searchIndex.filter(item => item.text.includes(q)).slice(0, 20);
+  if (!hits.length) { results.innerHTML = '<div class="search-empty">ไม่พบผลลัพธ์สำหรับ &ldquo;' + this.value + '&rdquo;</div>'; return; }
+  const hl = (t) => {
+    let res = '', pos = 0, lq = q.toLowerCase(), lt = t.toLowerCase();
+    while (pos < t.length) {
+      const i = lt.indexOf(lq, pos);
+      if (i < 0) { res += t.slice(pos); break; }
+      res += t.slice(pos, i) + '<mark>' + t.slice(i, i + q.length) + '<\/mark>';
+      pos = i + q.length;
+    }
+    return res;
+  };
+  results.innerHTML = hits.map(h => `
+    <div class="search-result-item" onclick="searchGo('${h.id}')">
+      <div class="sr-chapter">${h.chapter}</div>
+      <div class="sr-title">${hl(h.title)}</div>
+      ${h.snippet ? '<div class="sr-snippet">'+hl(h.snippet)+'</div>' : ''}
+    </div>`).join('');
+});
+
+function searchGo(id) {
+  closeSearch();
+  setTimeout(() => scrollToSection(id), 100);
+}
+
+// Keyboard close
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeSearch(); closeDrawer(); }
+});
+
+// ── Progress Bar + Active Nav Tab (top) ────────────────────
+const progressBar = document.getElementById('progressBar');
+const backTop     = document.getElementById('back-top');
+const navTabs     = document.querySelectorAll('.nav-tab');
+const sections    = ['hero','ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9','ch10','ch11','glossary'];
+
+window.addEventListener('scroll', () => {
+  const scrolled = window.scrollY;
+  const total    = document.documentElement.scrollHeight - window.innerHeight;
+  if (progressBar) progressBar.style.width = Math.min(100,(scrolled/total)*100)+'%';
+  if (backTop)     backTop.classList.toggle('show', scrolled > 400);
+
+  let active = 0;
+  sections.forEach((id,i) => {
+    const el = document.getElementById(id);
+    if (el && el.offsetTop - 120 <= scrolled) active = i;
+  });
+  navTabs.forEach((tab,i) => tab.classList.toggle('active', i === active));
+
+  // Update bottom nav active state based on scroll position
+  const curId = sections[active];
+  const bnavMap = { hero:'Home', ch1:'Chapters',ch2:'Chapters',ch3:'Chapters',
+    ch4:'Chapters',ch5:'Chapters',ch6:'Chapters',ch7:'Chapters',ch8:'Chapters',
+    ch9:'Chapters',ch10:'Chapters',ch11:'Chapters', glossary:'Glossary' };
+  ['Home','Chapters','Search','Glossary'].forEach(t => {
+    document.getElementById('bnav'+t)?.classList.remove('active');
+  });
+  const activeTab = bnavMap[curId] || 'Home';
+  document.getElementById('bnav'+activeTab)?.classList.add('active');
+}, { passive: true });
+
+// ── Checklist interactive ──────────────────────────────────
+document.querySelectorAll('.cl-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const checked = item.dataset.checked === '1';
+    item.dataset.checked = checked ? '0' : '1';
+    item.style.opacity   = checked ? '1' : '0.45';
+    item.style.textDecoration = checked ? '' : 'line-through';
+    item.querySelector('.cl-box').style.background = checked ? '' : 'var(--teal)';
+  });
+});
+
+// ── iOS standalone: hide status bar gap ───────────────────
+if (window.navigator.standalone) {
+  document.documentElement.style.setProperty('--ios-top', '44px');
+}
+</script>
+</body>
+</html>
