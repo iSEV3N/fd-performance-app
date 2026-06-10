@@ -5,7 +5,7 @@
 
 ## 🌐 เปิดอ่านออนไลน์
 
-**→ [เปิดแอพ](https://isev3n.github.io/fd-performance-app/)**
+**→ [เปิดแอพ](https://YOUR-USERNAME.github.io/fd-performance-app/)**
 
 ---
 

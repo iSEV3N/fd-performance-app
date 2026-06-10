@@ -13,21 +13,39 @@
 <meta name="format-detection" content="telephone=no">
 <meta name="msapplication-tap-highlight" content="no">
 <title>FD Performance · Flight Dispatcher Handbook</title>
-<!-- PWA Manifest inline -->
-<link rel="manifest" href="data:application/manifest+json,{
-  %22name%22:%22FD Performance - Flight Dispatcher Handbook%22,
-  %22short_name%22:%22FD Perf%22,
-  %22description%22:%22Aircraft Performance Handbook for Flight Dispatchers%22,
-  %22start_url%22:%22.%22,
-  %22display%22:%22standalone%22,
-  %22orientation%22:%22portrait%22,
-  %22background_color%22:%22%230D1B2A%22,
-  %22theme_color%22:%22%230D1B2A%22,
-  %22icons%22:[{%22src%22:%22data:image/svg+xml,...%22,%22sizes%22:%22any%22,%22type%22:%22image/svg+xml%22}]
-}">
-<!-- Apple touch icon — inline SVG converted to data URI -->
+<!-- PWA Icons (inline SVG data URIs) -->
 <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIj48cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgcng9IjQwIiBmaWxsPSIjMEQxQjJBIi8+PHRleHQgeD0iOTAiIHk9IjEwNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjcwIiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjMjE5NkM0Ij7inIY8L3RleHQ+PHRleHQgeD0iOTAiIHk9IjE1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjIyIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjNjhCNEQ4Ij5GRCBQRVJGPC90ZXh0Pjwvc3ZnPg==">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230D1B2A'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Arial' font-size='18' font-weight='900' fill='%232196C4'%3E✈%3C/text%3E%3C/svg%3E">
+<!-- Manifest injected by JS (data: URI not supported by Chrome for PWA install) -->
+<script>
+(function(){
+  const ICON_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%230D1B2A'/%3E%3Ctext x='256' y='320' text-anchor='middle' font-family='Arial' font-size='260' font-weight='900' fill='%232196C4'%3E✈%3C/text%3E%3C/svg%3E";
+  const manifest = {
+    name: "FD Performance — Flight Dispatcher Handbook",
+    short_name: "FD Perf",
+    description: "Aircraft Performance Handbook for Flight Dispatchers — 11 บท ICAO/FAR",
+    start_url: "./",
+    scope: "./",
+    display: "standalone",
+    orientation: "portrait-primary",
+    background_color: "#0D1B2A",
+    theme_color: "#0D1B2A",
+    lang: "th",
+    icons: [
+      { src: ICON_SVG, sizes: "512x512", type: "image/svg+xml", purpose: "any maskable" },
+      { src: ICON_SVG, sizes: "192x192", type: "image/svg+xml", purpose: "any" }
+    ],
+    categories: ["education", "utilities"],
+    screenshots: []
+  };
+  const blob = new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'});
+  const url  = URL.createObjectURL(blob);
+  const link = document.createElement('link');
+  link.rel   = 'manifest';
+  link.href  = url;
+  document.head.appendChild(link);
+})();
+</script>
 <style>
 /* ── TOKENS ─────────────────────────────────────── */
 :root {
@@ -3062,40 +3080,59 @@ Emergency Descent Rate: 4,000–6,000 ft/min (VMO/MMO)
 </footer>
 
 <script>
-// ── PWA: Register Service Worker ──────────────────────────
-const SW_SRC = `
-const CACHE = 'fdperf-v2';
-const URLS  = [self.location.pathname.replace(/\/sw\.js$/, '') || '/'];
-self.addEventListener('install', e => {
+// ── PWA: Register Service Worker via Blob ─────────────────
+(function registerSW() {
+  if (!('serviceWorker' in navigator)) return;
+  const SW = `
+const CACHE_NAME = 'fdperf-v3';
+const APP_URL = self.registration.scope;
+self.addEventListener('install', function(e) {
   e.waitUntil(
-    caches.open(CACHE)
-      .then(c => c.addAll(URLS))
-      .then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then(function(cache) {
+      return cache.add(APP_URL);
+    }).then(function() { return self.skipWaiting(); })
   );
 });
-self.addEventListener('activate', e => {
+self.addEventListener('activate', function(e) {
   e.waitUntil(
-    caches.keys()
-      .then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k))))
-      .then(() => self.clients.claim())
+    caches.keys().then(function(keys) {
+      return Promise.all(
+        keys.filter(function(k){ return k !== CACHE_NAME; })
+            .map(function(k){ return caches.delete(k); })
+      );
+    }).then(function(){ return self.clients.claim(); })
   );
 });
-self.addEventListener('fetch', e => {
+self.addEventListener('fetch', function(e) {
   if (e.request.method !== 'GET') return;
   e.respondWith(
-    caches.match(e.request).then(r => r || fetch(e.request).then(res => {
-      const clone = res.clone();
-      caches.open(CACHE).then(c => c.put(e.request, clone));
-      return res;
-    }))
+    caches.match(e.request).then(function(cached) {
+      if (cached) return cached;
+      return fetch(e.request).then(function(response) {
+        var clone = response.clone();
+        caches.open(CACHE_NAME).then(function(cache) {
+          cache.put(e.request, clone);
+        });
+        return response;
+      });
+    })
   );
 });
 `;
-if ('serviceWorker' in navigator) {
-  const blob = new Blob([SW_SRC], {type:'text/javascript'});
-  const url  = URL.createObjectURL(blob);
-  navigator.serviceWorker.register(url).catch(()=>{});
-}
+  try {
+    const blob = new Blob([SW], { type: 'text/javascript' });
+    const swUrl = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swUrl, { scope: './' })
+      .then(function(reg) {
+        console.log('[SW] Registered scope:', reg.scope);
+      })
+      .catch(function(err) {
+        console.warn('[SW] Registration failed:', err);
+      });
+  } catch(e) {
+    console.warn('[SW] Blob SW failed:', e);
+  }
+})();
 
 // ── Splash Screen ──────────────────────────────────────────
 window.addEventListener('load', () => {
